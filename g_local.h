@@ -844,6 +844,12 @@ typedef struct
 	int			helpchanged;
 
 	qboolean	spectator;			// client is a spectator
+
+	/**class mod ex*/
+	int			max_mana;		//maximum mana for player
+	float		mana;			//current mana for player
+
+	float		mana_regen;
 } client_persistant_t;
 
 // client data that stays across deathmatch respawns
@@ -1091,5 +1097,9 @@ struct edict_s
 	// common data blocks
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
+
+	//class mod ex
+	int			max_mana;		/**maximum mana for player*/
+	float		mana;			/**current mana for player*/
 };
 

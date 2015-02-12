@@ -588,6 +588,11 @@ but is called after each death and level change in deathmatch
 void InitClientPersistant (gclient_t *client)
 {
 	gitem_t		*item;
+	int			max_mana;
+	float		mana_regen;
+
+	mana_regen = client->pers.mana_regen;
+	max_mana = client->pers.max_mana;
 
 	memset (&client->pers, 0, sizeof(client->pers));
 
@@ -608,6 +613,11 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.max_slugs		= 50;
 
 	client->pers.connected = true;
+
+	client->pers.max_mana = max_mana;
+	client->pers.mana_regen = mana_regen;
+
+	client->pers.mana = client->pers.max_mana *0.5;
 }
 
 
@@ -1200,6 +1210,11 @@ void PutClientInServer (edict_t *ent)
 	ent->s.origin[2] += 1;	// make sure off ground
 	VectorCopy (ent->s.origin, ent->s.old_origin);
 
+	/**sets mana mod variables*/
+	client->pers.mana = 0;
+	client->pers.max_mana = 100;
+	client->pers.mana_regen = 0.1;
+
 	// set the delta angle
 	for (i=0 ; i<3 ; i++)
 	{
@@ -1752,6 +1767,15 @@ void ClientBeginServerFrame (edict_t *ent)
 		return;
 
 	client = ent->client;
+
+	/**Mana regeneration*/
+	if(client->pers.mana < client->pers.max_mana)
+	{
+		client->pers.mana += client->pers.mana_regen;
+	}
+
+	gi.centerprintf(ent,"Mana: %i / %i\n",(int)client->pers.mana,client->pers.max_mana);
+	/**end*/
 
 	if (deathmatch->value &&
 		client->pers.spectator != client->resp.spectator &&
