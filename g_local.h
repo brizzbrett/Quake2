@@ -850,6 +850,12 @@ typedef struct
 	float		mana;			//current mana for player
 
 	float		mana_regen;
+
+	int			max_stamina;
+	float		stamina;
+
+	float		stamina_regen;
+
 } client_persistant_t;
 
 // client data that stays across deathmatch respawns
@@ -1098,10 +1104,16 @@ struct edict_s
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
 
+
 	//class mod ex
 	int			max_mana;		/**maximum mana for player*/
 	float		mana;			/**current mana for player*/
 
 	float		mana_regen;
+
+	int			max_stamina;
+	float		stamina;
+	float		stamina_regen;
+
 };
 
