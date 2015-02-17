@@ -1101,5 +1101,7 @@ struct edict_s
 	//class mod ex
 	int			max_mana;		/**maximum mana for player*/
 	float		mana;			/**current mana for player*/
+
+	float		mana_regen;
 };
 
