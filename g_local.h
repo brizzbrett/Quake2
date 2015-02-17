@@ -844,6 +844,11 @@ typedef struct
 	int			helpchanged;
 
 	qboolean	spectator;			// client is a spectator
+
+	int			max_stamina;
+	int			stamina;
+
+	float		stamina_regen;
 } client_persistant_t;
 
 // client data that stays across deathmatch respawns
