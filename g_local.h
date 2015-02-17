@@ -1091,5 +1091,9 @@ struct edict_s
 	// common data blocks
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
+
+	int				max_stamina;
+	float			stamina;
+	float			stamina_regen;
 };
 
