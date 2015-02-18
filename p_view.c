@@ -855,7 +855,7 @@ void G_SetClientFrame (edict_t *ent)
 	// check for stand/duck and stop/go transitions
 	if (duck != client->anim_duck && client->anim_priority < ANIM_DEATH)
 		goto newanim;
-	if (run != client->anim_run && client->anim_priority == ANIM_BASIC)
+	if (run != client->anim_run && client->anim_priority == ANIM_JUMP)
 		goto newanim;
 	if (!ent->groundentity && client->anim_priority <= ANIM_WAVE)
 		goto newanim;

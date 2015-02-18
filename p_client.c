@@ -590,9 +590,13 @@ void InitClientPersistant (gclient_t *client)
 	gitem_t		*item;
 	int			max_mana;
 	float		mana_regen;
+	int			max_stamina;
+	float		stamina_regen;
 
 	mana_regen = client->pers.mana_regen;
 	max_mana = client->pers.max_mana;
+	max_stamina = client->pers.max_stamina;
+	stamina_regen = client->pers.stamina_regen;
 
 	memset (&client->pers, 0, sizeof(client->pers));
 
@@ -617,6 +621,10 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.max_mana = max_mana;
 	client->pers.mana_regen = mana_regen;
 
+	client->pers.max_stamina = max_stamina;
+	client->pers.stamina_regen = stamina_regen;
+
+	client->pers.stamina = client->pers.max_stamina;
 	client->pers.mana = client->pers.max_mana *0.5;
 }
 
@@ -1214,6 +1222,9 @@ void PutClientInServer (edict_t *ent)
 	client->pers.mana = 0;
 	client->pers.max_mana = 100;
 	client->pers.mana_regen = 0.1;
+	client->pers.stamina = 0;
+	client->pers.max_stamina = 100;
+	client->pers.stamina_regen = 0.5;
 
 	// set the delta angle
 	for (i=0 ; i<3 ; i++)
@@ -1768,13 +1779,17 @@ void ClientBeginServerFrame (edict_t *ent)
 
 	client = ent->client;
 
-	/**Mana regeneration*/
+	/**Mana/Stamina regeneration*/
 	if(client->pers.mana < client->pers.max_mana)
 	{
 		client->pers.mana += client->pers.mana_regen;
 	}
-
-	gi.centerprintf(ent,"Mana: %i / %i\n",(int)client->pers.mana,client->pers.max_mana);
+	if(client->pers.stamina < client->pers.max_stamina)
+	{
+		client->pers.stamina += client->pers.stamina_regen;
+	}
+	gi.cprintf(ent, PRINT_HIGH, "Stamina: %i / %i\n",(int)client->pers.stamina,client->pers.max_stamina);
+	gi.centerprintf(ent,"Stamina: %i / %i\n",(int)client->pers.stamina,client->pers.max_stamina);
 	/**end*/
 
 	if (deathmatch->value &&
