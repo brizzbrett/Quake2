@@ -588,13 +588,9 @@ but is called after each death and level change in deathmatch
 void InitClientPersistant (gclient_t *client)
 {
 	gitem_t		*item;
-	int			max_mana;
-	float		mana_regen;
 	int			max_stamina;
 	float		stamina_regen;
 
-	mana_regen = client->pers.mana_regen;
-	max_mana = client->pers.max_mana;
 	max_stamina = client->pers.max_stamina;
 	stamina_regen = client->pers.stamina_regen;
 
@@ -618,14 +614,10 @@ void InitClientPersistant (gclient_t *client)
 
 	client->pers.connected = true;
 
-	client->pers.max_mana = max_mana;
-	client->pers.mana_regen = mana_regen;
-
 	client->pers.max_stamina = max_stamina;
 	client->pers.stamina_regen = stamina_regen;
 
 	client->pers.stamina = client->pers.max_stamina;
-	client->pers.mana = client->pers.max_mana *0.5;
 }
 
 
@@ -1218,13 +1210,10 @@ void PutClientInServer (edict_t *ent)
 	ent->s.origin[2] += 1;	// make sure off ground
 	VectorCopy (ent->s.origin, ent->s.old_origin);
 
-	/**sets mana mod variables*/
-	client->pers.mana = 0;
-	client->pers.max_mana = 100;
-	client->pers.mana_regen = 0.1;
-	client->pers.stamina = 0;
+	/**sets stamina variables*/
+	client->pers.stamina = 100;
 	client->pers.max_stamina = 100;
-	client->pers.stamina_regen = 0.5;
+	client->pers.stamina_regen = 3;
 
 	// set the delta angle
 	for (i=0 ; i<3 ; i++)
@@ -1773,21 +1762,17 @@ void ClientBeginServerFrame (edict_t *ent)
 {
 	gclient_t	*client;
 	int			buttonMask;
+	qboolean		notBelowZero = true;
 
 	if (level.intermissiontime)
 		return;
 
 	client = ent->client;
 
-	/**Mana/Stamina regeneration*/
-	if(client->pers.mana < client->pers.max_mana)
-	{
-		client->pers.mana += client->pers.mana_regen;
-	}
-	if(client->pers.stamina < client->pers.max_stamina)
-	{
-		client->pers.stamina += client->pers.stamina_regen;
-	}
+	if(client->pers.stamina <= client->pers.max_stamina)
+		client->pers.stamina += client->pers.stamina_regen;		
+
+
 	gi.cprintf(ent, PRINT_HIGH, "Stamina: %i / %i\n",(int)client->pers.stamina,client->pers.max_stamina);
 	gi.centerprintf(ent,"Stamina: %i / %i\n",(int)client->pers.stamina,client->pers.max_stamina);
 	/**end*/

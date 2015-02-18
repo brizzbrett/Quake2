@@ -361,6 +361,7 @@ A generic function to handle the basics of weapon thinking
 void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent), int stamina_loss)
 {
 	int		n;
+	int		i = 0;
 
 	if(ent->deadflag || ent->s.modelindex != 255) // VWep animations screw up corpses
 	{
@@ -489,31 +490,35 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 		}
 	}
 
-	if (ent->client->weaponstate == WEAPON_FIRING && ent->client->pers.stamina > 0)
+	if (ent->client->weaponstate == WEAPON_FIRING)
 	{
 		for (n = 0; fire_frames[n]; n++)
-		{
-			if (ent->client->ps.gunframe == fire_frames[n])
+		{		
+			if(ent->client->pers.stamina > 0)
 			{
-			
-				ent->client->pers.stamina -= 2;
-				if (ent->client->quad_framenum > level.framenum){
-					gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage3.wav"), 1, ATTN_NORM, 0);
-				}
+				if (ent->client->ps.gunframe == fire_frames[n])
+				{
+					ent->client->pers.stamina -= 5;
+					ent->client->pers.stamina_regen = 0;
+					if (ent->client->quad_framenum > level.framenum){
+						gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage3.wav"), 1, ATTN_NORM, 0);
+					}
 
-				fire (ent);
+					fire (ent);
+					break;
+				}
+			}
+			else
+			{
 				break;
 			}
 		}
-
 		if (!fire_frames[n])
 			ent->client->ps.gunframe++;
 		if (ent->client->ps.gunframe == FRAME_IDLE_FIRST+1)
 			ent->client->weaponstate = WEAPON_READY;
-	}
-	else
-	{
-		ent->client->pers.stamina = -5;
+
+
 	}
 }
 

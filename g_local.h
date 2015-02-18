@@ -845,16 +845,12 @@ typedef struct
 
 	qboolean	spectator;			// client is a spectator
 
-	/**class mod ex*/
-	int			max_mana;		//maximum mana for player
-	float		mana;			//current mana for player
+	/**midterm mod */
 
-	float		mana_regen;
+	int			max_stamina;	/**max stamina for player */
+	float		stamina;		/**current stamina for player */
 
-	int			max_stamina;
-	float		stamina;
-
-	float		stamina_regen;
+	float		stamina_regen;	/**regen float for stamina */
 
 } client_persistant_t;
 
@@ -1104,13 +1100,7 @@ struct edict_s
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
 
-
-	//class mod ex
-	int			max_mana;		/**maximum mana for player*/
-	float		mana;			/**current mana for player*/
-
-	float		mana_regen;
-
+	/*midterm proj mod*/
 	int			max_stamina;
 	float		stamina;
 	float		stamina_regen;
