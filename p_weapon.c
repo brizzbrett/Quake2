@@ -512,7 +512,7 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 			{
 				break;
 			}
-		}
+		}T
 		if (!fire_frames[n])
 			ent->client->ps.gunframe++;
 		if (ent->client->ps.gunframe == FRAME_IDLE_FIRST+1)
