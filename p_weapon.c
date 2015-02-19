@@ -467,8 +467,10 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 		}
 		else
 		{
+			ent->client->pers.stamina_regen = 3;
 			if (ent->client->ps.gunframe == FRAME_IDLE_LAST)
 			{
+				ent->client->pers.stamina_regen = 3;
 				ent->client->ps.gunframe = FRAME_IDLE_FIRST;
 				return;
 			}
@@ -508,9 +510,11 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 					break;
 				}
 			}
-			else
+			if(ent->client->pers.stamina <= 0)
 			{
-				break;
+				ent->client->weaponstate = WEAPON_ACTIVATING;
+				ent->client->ps.gunframe = FRAME_ACTIVATE_LAST;
+				return;
 			}
 		}
 		if (!fire_frames[n])

@@ -1769,8 +1769,10 @@ void ClientBeginServerFrame (edict_t *ent)
 
 	client = ent->client;
 
-	if(client->pers.stamina <= client->pers.max_stamina)
-		client->pers.stamina += client->pers.stamina_regen;		
+	if(client->pers.stamina < client->pers.max_stamina)
+		client->pers.stamina += client->pers.stamina_regen;
+	else
+		client->pers.stamina = client->pers.max_stamina;
 
 
 	gi.cprintf(ent, PRINT_HIGH, "Stamina: %i / %i\n",(int)client->pers.stamina,client->pers.max_stamina);
