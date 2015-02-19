@@ -470,7 +470,6 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 			ent->client->pers.stamina_regen = 3;
 			if (ent->client->ps.gunframe == FRAME_IDLE_LAST)
 			{
-				ent->client->pers.stamina_regen = 3;
 				ent->client->ps.gunframe = FRAME_IDLE_FIRST;
 				return;
 			}
