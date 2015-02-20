@@ -635,11 +635,17 @@ char *single_statusbar =
 "xv	50 "
 "pic 0 "
 
+// stamina
+"	xv	100 "	
+"	num	3	18 "			
+"	xv	150 "		
+"	pic	19 "
+
 // ammo
 "if 2 "
-"	xv	100 "
+"	xv	200 "
 "	anum "
-"	xv	150 "
+"	xv	250 "
 "	pic 2 "
 "endif "
 
@@ -693,11 +699,17 @@ char *dm_statusbar =
 "xv	50 "
 "pic 0 "
 
+// stamina
+"	xv	100 "	
+"	num	3	18 "			
+"	xv	150 "		
+"	pic	19 "
+
 // ammo
 "if 2 "
-"	xv	100 "
+"	xv	200 "
 "	anum "
-"	xv	150 "
+"	xv	250 "
 "	pic 2 "
 "endif "
 
