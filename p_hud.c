@@ -1,7 +1,7 @@
 #include "g_local.h"
 
-
-
+/** STAMINA MOD IMPLEMENTATION - ~Line 370-374 Stamina setup on HUD*/
+	
 /*
 ======================================================================
 

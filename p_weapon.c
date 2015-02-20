@@ -3,6 +3,11 @@
 #include "g_local.h"
 #include "m_player.h"
 
+/*STAMINA MOD IMPLEMENTATIONS WITHIN THIS FUNCTION
+	~line 367 - int stamina_loss parameter
+	~line 476 - stamina_regen set to 3
+	~line 504-512 - if statement, stamina depletion, stamina_regen set to 0
+*/
 
 static qboolean	is_quad;
 static byte		is_silenced;
@@ -358,6 +363,7 @@ A generic function to handle the basics of weapon thinking
 #define FRAME_IDLE_FIRST		(FRAME_FIRE_LAST + 1)
 #define FRAME_DEACTIVATE_FIRST	(FRAME_IDLE_LAST + 1)
 
+
 void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent), int stamina_loss)
 {
 	int		n;
@@ -467,7 +473,7 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 		}
 		else
 		{
-			ent->client->pers.stamina_regen = 3;
+			ent->client->pers.stamina_regen = 3; //Sets stamina regen to 3 when BUTTON_ATTACK is not clicked
 			if (ent->client->ps.gunframe == FRAME_IDLE_LAST)
 			{
 				ent->client->ps.gunframe = FRAME_IDLE_FIRST;
@@ -494,13 +500,17 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 	if (ent->client->weaponstate == WEAPON_FIRING)
 	{
 		for (n = 0; fire_frames[n]; n++)
-		{		
+		{	
+			/**If stamina is higher than 0, execute fire_frames normally
+				If its not, bullets stop shooting.
+			*/
 			if(ent->client->pers.stamina > 0)
 			{
 				if (ent->client->ps.gunframe == fire_frames[n])
 				{
-					ent->client->pers.stamina -= 5;
-					ent->client->pers.stamina_regen = 0;
+					ent->client->pers.stamina -= 5; //Set stamina depletion per fire_frame[n]
+					ent->client->pers.stamina_regen = 0; //Sets stamina_regen to 0 while firing
+
 					if (ent->client->quad_framenum > level.framenum){
 						gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage3.wav"), 1, ATTN_NORM, 0);
 					}

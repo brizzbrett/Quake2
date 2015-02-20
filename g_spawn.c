@@ -1,6 +1,11 @@
 
 #include "g_local.h"
 
+/** STAMINA MOD IMPLEMENTATION
+	~Line 643-647 stamina placement on HUD
+	~Line 707-711 stamina placement on HUD (DM)
+*/
+
 typedef struct
 {
 	char	*name;
