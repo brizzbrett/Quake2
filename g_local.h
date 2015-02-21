@@ -177,7 +177,7 @@ MOVETYPE_FLY,
 MOVETYPE_TOSS,			// gravity
 MOVETYPE_FLYMISSILE,	// extra size to monsters
 MOVETYPE_BOUNCE,
-MOVETYPE_ARROW
+MOVETYPE_ARROW			//gravity for arrows
 } movetype_t;
 
 

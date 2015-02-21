@@ -3,7 +3,7 @@
 #include "g_local.h"
 #include "m_player.h"
 
-/*STAMINA MOD IMPLEMENTATIONS WITHIN THIS FUNCTION
+/*STAMINA MOD IMPLEMENTATIONS
 	~line 367 - int stamina_loss parameter
 	~line 476 - stamina_regen set to 3
 	~line 504-512 - if statement, stamina depletion, stamina_regen set to 0
