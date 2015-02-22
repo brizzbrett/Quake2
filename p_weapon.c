@@ -817,27 +817,24 @@ void Longbow_Fire (edict_t *ent)
 
 		VectorScale (forward, -2, ent->client->kick_origin);
 		ent->client->kick_angles[0] = -1;
-		if(ent->client->ps.gunframe == 4 ||
-			ent->client->ps.gunframe == 5 ||
-			ent->client->ps.gunframe == 6)
+
+		if(ent->client->ps.gunframe >= 4 &&
+			ent->client->ps.gunframe <= 6)
 		{
 			fire_bow (ent, start, forward, damage, 250);
 		}
-		else if(ent->client->ps.gunframe == 7 ||
-			ent->client->ps.gunframe == 8 ||
-			ent->client->ps.gunframe == 9)
+		else if(ent->client->ps.gunframe >= 7 &&
+			ent->client->ps.gunframe <= 9)
 		{
 			fire_bow (ent, start, forward, damage, 500);
 		}
-		else if(ent->client->ps.gunframe == 10 ||
-			ent->client->ps.gunframe == 11 ||
-			ent->client->ps.gunframe == 12)
+		else if(ent->client->ps.gunframe >= 10 &&
+			ent->client->ps.gunframe <= 12)
 		{
 			fire_bow (ent, start, forward, damage, 750);
 		}
-		else if(ent->client->ps.gunframe == 13 ||
-			ent->client->ps.gunframe == 14 ||
-			ent->client->ps.gunframe == 15)
+		else if(ent->client->ps.gunframe >= 13 &&
+			ent->client->ps.gunframe <= 15)
 		{
 			fire_bow (ent, start, forward, damage, 1250);
 		}
@@ -859,8 +856,8 @@ void Weapon_Longbow (edict_t *ent)
 {
 	static int	pause_frames[]	= {19, 32, 0};
 	static int fire_frames[] = {15,0};
-
-	if(!((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK))
+	qboolean notFired = true;
+	if(!((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) && notFired)
 	{
 		switch(ent->client->ps.gunframe)
 		{
@@ -885,6 +882,7 @@ void Weapon_Longbow (edict_t *ent)
 			fire_frames[0] = 6;
 			break;
 		}
+		notFired = false;
 	}
 	Weapon_Generic (ent, 3, fire_frames[0]+1, 52, 55, pause_frames, fire_frames, Longbow_Fire);
 }
