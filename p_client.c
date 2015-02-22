@@ -1213,7 +1213,7 @@ void PutClientInServer (edict_t *ent)
 	/**sets stamina variables*/
 	client->pers.stamina = 100;
 	client->pers.max_stamina = 100;
-	client->pers.stamina_regen = 3;
+	client->pers.stamina_regen = 7;
 
 	// set the delta angle
 	for (i=0 ; i<3 ; i++)

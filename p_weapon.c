@@ -473,7 +473,7 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 		}
 		else
 		{
-			ent->client->pers.stamina_regen = 3; //Sets stamina regen to 3 when BUTTON_ATTACK is not clicked
+			ent->client->pers.stamina_regen = 7; //Sets stamina regen to 3 when BUTTON_ATTACK is not clicked
 			if (ent->client->ps.gunframe == FRAME_IDLE_LAST)
 			{
 				ent->client->ps.gunframe = FRAME_IDLE_FIRST;
