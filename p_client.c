@@ -299,6 +299,10 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			case MOD_BLASTER:
 				message = "was blasted by";
 				break;
+			//Means of Death message for death by longbow
+			case MOD_LONGBOW:
+				message = "was an adventurer like you, but then took an arrow to the knee by";
+				break;
 			case MOD_SHOTGUN:
 				message = "was gunned down by";
 				break;

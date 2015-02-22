@@ -683,8 +683,15 @@ void SV_Physics_Toss (edict_t *ent)
 
 // add gravity
 	if (ent->movetype != MOVETYPE_FLY
-	&& ent->movetype != MOVETYPE_FLYMISSILE)
+	&& ent->movetype != MOVETYPE_FLYMISSILE
+	&& ent->movetype != MOVETYPE_ARROW)
 		SV_AddGravity (ent);
+
+//Movetype for arrows for bow
+	if(ent->movetype == MOVETYPE_ARROW) 
+	{
+		ent->velocity[2] -= ((ent->gravity/2) * sv_gravity->value * FRAMETIME);
+	}
 
 // move angles
 	VectorMA (ent->s.angles, FRAMETIME, ent->avelocity, ent->s.angles);
@@ -934,6 +941,7 @@ void G_RunEntity (edict_t *ent)
 	case MOVETYPE_BOUNCE:
 	case MOVETYPE_FLY:
 	case MOVETYPE_FLYMISSILE:
+	case MOVETYPE_ARROW:		//case for arrows gravity
 		SV_Physics_Toss (ent);
 		break;
 	default:

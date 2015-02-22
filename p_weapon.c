@@ -789,6 +789,109 @@ void Weapon_RocketLauncher (edict_t *ent)
 /*
 ======================================================================
 
+LONGBOW
+
+======================================================================
+*/
+
+void Longbow_Fire (edict_t *ent)
+{
+	vec3_t	forward, right;
+	vec3_t	start;
+	vec3_t	offset;
+	int		damage;
+	int		i = 0;
+
+	if (deathmatch->value)
+		damage = 15;
+	else
+		damage = 10;
+	if (is_quad)
+		damage *= 4;
+	if(!((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK))
+	{
+		AngleVectors (ent->client->v_angle, forward, right, NULL);
+
+		VectorSet(offset, 24, 8, ent->viewheight-4);
+		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+
+		VectorScale (forward, -2, ent->client->kick_origin);
+		ent->client->kick_angles[0] = -1;
+		if(ent->client->ps.gunframe == 4 ||
+			ent->client->ps.gunframe == 5 ||
+			ent->client->ps.gunframe == 6)
+		{
+			fire_bow (ent, start, forward, damage, 250);
+		}
+		else if(ent->client->ps.gunframe == 7 ||
+			ent->client->ps.gunframe == 8 ||
+			ent->client->ps.gunframe == 9)
+		{
+			fire_bow (ent, start, forward, damage, 500);
+		}
+		else if(ent->client->ps.gunframe == 10 ||
+			ent->client->ps.gunframe == 11 ||
+			ent->client->ps.gunframe == 12)
+		{
+			fire_bow (ent, start, forward, damage, 750);
+		}
+		else if(ent->client->ps.gunframe == 13 ||
+			ent->client->ps.gunframe == 14 ||
+			ent->client->ps.gunframe == 15)
+		{
+			fire_bow (ent, start, forward, damage, 1250);
+		}
+
+		// send muzzle flash
+		gi.WriteByte (svc_muzzleflash);
+		gi.WriteShort (ent-g_edicts);
+		gi.WriteByte (MZ_BLASTER | is_silenced);
+		gi.multicast (ent->s.origin, MULTICAST_PVS);
+	
+
+		ent->client->ps.gunframe++;
+
+		PlayerNoise(ent, start, PNOISE_WEAPON);
+	}
+}
+
+void Weapon_Longbow (edict_t *ent)
+{
+	static int	pause_frames[]	= {19, 32, 0};
+	static int fire_frames[] = {15,0};
+
+	if(!((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK))
+	{
+		switch(ent->client->ps.gunframe)
+		{
+		case 13:
+		case 14:
+		case 15:
+			fire_frames[0] = 15;
+			break;
+		case 10:
+		case 11:
+		case 12:
+			fire_frames[0] = 12;
+			break;
+		case 7:
+		case 8:
+		case 9:
+			fire_frames[0] = 9;
+			break;
+		case 4:
+		case 5:
+		case 6:
+			fire_frames[0] = 6;
+			break;
+		}
+	}
+	Weapon_Generic (ent, 3, fire_frames[0]+1, 52, 55, pause_frames, fire_frames, Longbow_Fire);
+}
+
+/*
+======================================================================
+
 BLASTER / HYPERBLASTER
 
 ======================================================================

@@ -275,7 +275,86 @@ void fire_shotgun (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int k
 	for (i = 0; i < count; i++)
 		fire_lead (self, start, aimdir, damage, kick, TE_SHOTGUN, hspread, vspread, mod);
 }
+/*
+=================
+fire_bow
 
+Fires a single arrow.
+=================
+*/
+void bow_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+{
+	if (other == self->owner)
+		return;
+
+	if (surf && (surf->flags & SURF_SKY))
+	{
+		G_FreeEdict (self);
+		return;
+	}
+
+	if (self->owner->client)
+		PlayerNoise(self->owner, self->s.origin, PNOISE_IMPACT);
+
+	if (other->takedamage)
+	{
+		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, self->dmg, 1, DAMAGE_ENERGY, MOD_LONGBOW);
+	}
+	else
+	{
+		gi.WriteByte (svc_temp_entity);
+		gi.WriteByte (TE_BLASTER);
+		gi.WritePosition (self->s.origin);
+		if (!plane)
+			gi.WriteDir (vec3_origin);
+		else
+			gi.WriteDir (plane->normal);
+		gi.multicast (self->s.origin, MULTICAST_PVS);
+	}
+
+	G_FreeEdict (self);
+}
+void fire_bow (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed)
+{
+	edict_t	*arrow;
+	trace_t	tr;
+
+	VectorNormalize (dir);
+
+	arrow = G_Spawn();
+	arrow->svflags = SVF_DEADMONSTER;
+
+	VectorCopy (start, arrow->s.origin);
+	VectorCopy (start, arrow->s.old_origin);
+	vectoangles (dir, arrow->s.angles);
+	VectorScale (dir, speed, arrow->velocity);
+	arrow->movetype = MOVETYPE_ARROW;
+	arrow->clipmask = MASK_SHOT;
+	arrow->solid = SOLID_BBOX;
+	arrow->s.effects |= EF_GIB;
+	VectorClear (arrow->mins);
+	VectorClear (arrow->maxs);
+	arrow->s.modelindex = gi.modelindex ("models/objects/laser/tris.md2");
+	arrow->s.sound = gi.soundindex ("misc/lasfly.wav");
+	arrow->owner = self;
+	arrow->touch = bow_touch;
+	arrow->nextthink = level.time + 2;
+	arrow->think = G_FreeEdict;
+	arrow->dmg = damage;
+	arrow->classname = "arrow";
+
+	gi.linkentity (arrow);
+
+	if (self->client)
+		check_dodge (self, arrow->s.origin, dir, speed);
+
+	tr = gi.trace (self->s.origin, NULL, NULL, arrow->s.origin, arrow, MASK_SHOT);
+	if (tr.fraction < 1.0)
+	{
+		VectorMA (arrow->s.origin, -10, dir, arrow->s.origin);
+		arrow->touch (arrow, tr.ent, NULL, NULL);
+	}
+}
 
 /*
 =================
@@ -321,7 +400,7 @@ void blaster_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *
 	}
 
 	G_FreeEdict (self);
-}
+}	
 
 void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, int effect, qboolean hyper)
 {
