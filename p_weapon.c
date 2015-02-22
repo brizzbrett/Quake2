@@ -856,8 +856,7 @@ void Weapon_Longbow (edict_t *ent)
 {
 	static int	pause_frames[]	= {19, 32, 0};
 	static int fire_frames[] = {15,0};
-	qboolean notFired = true;
-	if(!((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) && notFired)
+	if(!((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK))
 	{
 		switch(ent->client->ps.gunframe)
 		{
@@ -882,7 +881,6 @@ void Weapon_Longbow (edict_t *ent)
 			fire_frames[0] = 6;
 			break;
 		}
-		notFired = false;
 	}
 	Weapon_Generic (ent, 3, fire_frames[0]+1, 52, 55, pause_frames, fire_frames, Longbow_Fire);
 }
