@@ -856,31 +856,40 @@ void Weapon_Longbow (edict_t *ent)
 {
 	static int	pause_frames[]	= {19, 32, 0};
 	static int fire_frames[] = {15,0};
-	if(!((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK))
+	int a = 0;
+	int b = 0;
+	int c = 0;
+	int d = 0;
+	if(!((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) && a == 0)
 	{
 		switch(ent->client->ps.gunframe)
 		{
 		case 13:
 		case 14:
 		case 15:
+			a = 1;
 			fire_frames[0] = 15;
 			break;
 		case 10:
 		case 11:
 		case 12:
+			a = 1;
 			fire_frames[0] = 12;
 			break;
 		case 7:
 		case 8:
 		case 9:
+			a = 1;
 			fire_frames[0] = 9;
 			break;
 		case 4:
 		case 5:
 		case 6:
+			a = 1;
 			fire_frames[0] = 6;
 			break;
 		}
+		gi.centerprintf(ent, "%i",fire_frames[0]);
 	}
 	Weapon_Generic (ent, 3, fire_frames[0]+1, 52, 55, pause_frames, fire_frames, Longbow_Fire);
 }
