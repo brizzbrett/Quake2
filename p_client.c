@@ -1747,6 +1747,10 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (other->inuse && other->client->chase_target == ent)
 			UpdateChaseCam(other);
 	}
+	//if(IS_SET(ent->owner->svflags, FL_STUNNED))
+	//{
+	//	gi.centerprintf(ent, "STUNNED");
+	//}
 }
 
 
