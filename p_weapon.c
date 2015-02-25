@@ -808,6 +808,7 @@ void Longbow_Fire (edict_t *ent)
 		damage = 10;
 	if (is_quad)
 		damage *= 4;
+
 	if(!((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK))
 	{
 		AngleVectors (ent->client->v_angle, forward, right, NULL);
@@ -852,46 +853,82 @@ void Longbow_Fire (edict_t *ent)
 	}
 }
 
+
 void Weapon_Longbow (edict_t *ent)
 {
-	static int	pause_frames[]	= {19, 32, 0};
-	static int fire_frames[] = {15,0};
-	int a = 0;
-	int b = 0;
-	int c = 0;
-	int d = 0;
-	if(!((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) && a == 0)
+	int fire;
+
+	if ((ent->client->newweapon) && (ent->client->weaponstate == WEAPON_READY))
 	{
-		switch(ent->client->ps.gunframe)
-		{
-		case 13:
-		case 14:
-		case 15:
-			a = 1;
-			fire_frames[0] = 15;
-			break;
-		case 10:
-		case 11:
-		case 12:
-			a = 1;
-			fire_frames[0] = 12;
-			break;
-		case 7:
-		case 8:
-		case 9:
-			a = 1;
-			fire_frames[0] = 9;
-			break;
-		case 4:
-		case 5:
-		case 6:
-			a = 1;
-			fire_frames[0] = 6;
-			break;
-		}
-		gi.centerprintf(ent, "%i",fire_frames[0]);
+		ChangeWeapon (ent);
+		return;
 	}
-	Weapon_Generic (ent, 3, fire_frames[0]+1, 52, 55, pause_frames, fire_frames, Longbow_Fire);
+
+	if (ent->client->weaponstate == WEAPON_ACTIVATING)
+	{
+		ent->client->weaponstate = WEAPON_READY;
+		ent->client->ps.gunframe = fire+3;
+		return;
+	}
+
+	if (ent->client->weaponstate == WEAPON_READY)
+	{
+		if ( ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) )
+		{
+			ent->client->latched_buttons &= ~BUTTON_ATTACK;
+			//if (ent->client->pers.inventory[ent->client->ammo_index])
+			//{
+				ent->client->ps.gunframe = 3;
+				ent->client->weaponstate = WEAPON_FIRING;
+				ent->client->grenade_time = 0;
+			//}
+			//else
+			//{
+				//if (level.time >= ent->pain_debounce_time)
+				//{
+				//	gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+				//	ent->pain_debounce_time = level.time + 1;
+				//}
+				//NoAmmoWeaponChange (ent);
+			//}
+			return;
+		}
+
+		if ((ent->client->ps.gunframe == 29) || (ent->client->ps.gunframe == 34) || (ent->client->ps.gunframe == 39) || (ent->client->ps.gunframe == 48))
+		{
+			if (rand()&15)
+				return;
+		}
+
+		if (++ent->client->ps.gunframe > 48)
+			ent->client->ps.gunframe = fire+3;
+		return;
+	}
+
+	if (ent->client->weaponstate == WEAPON_FIRING)
+	{
+		if (ent->client->ps.gunframe == fire)
+		{
+			if (ent->client->buttons & BUTTON_ATTACK)
+			{
+				return;
+			}
+		}
+
+		if (ent->client->ps.gunframe == fire+1)
+		{
+			ent->client->weapon_sound = 0;
+			Longbow_Fire (ent);
+		}
+
+		ent->client->ps.gunframe++;
+
+		if (ent->client->ps.gunframe == fire+3)
+		{
+			ent->client->grenade_time = 0;
+			ent->client->weaponstate = WEAPON_READY;
+		}
+	}
 }
 
 /*
