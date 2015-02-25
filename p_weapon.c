@@ -3,12 +3,6 @@
 #include "g_local.h"
 #include "m_player.h"
 
-/*STAMINA MOD IMPLEMENTATIONS
-	~line 367 - int stamina_loss parameter
-	~line 476 - stamina_regen set to 3
-	~line 504-512 - if statement, stamina depletion, stamina_regen set to 0
-*/
-
 static qboolean	is_quad;
 static byte		is_silenced;
 
@@ -473,7 +467,7 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 		}
 		else
 		{
-			ent->client->pers.stamina_regen = 7; //Sets stamina regen to 3 when BUTTON_ATTACK is not clicked
+			ent->client->pers.stamina_regen = 4; //Sets stamina regen to 4 when BUTTON_ATTACK is not clicked
 			if (ent->client->ps.gunframe == FRAME_IDLE_LAST)
 			{
 				ent->client->ps.gunframe = FRAME_IDLE_FIRST;
@@ -870,10 +864,10 @@ void Weapon_Crossbow_Fire(edict_t *ent)
 	int		damage;
 
 	if (deathmatch->value)
-		damage = 11*1.5;
+		damage = 15*1.5;
 	else
-		damage = 11;
-	Bow_Fire(ent,vec3_origin,damage,11);
+		damage = 15;
+	Bow_Fire(ent,vec3_origin,damage,15);
 
 	ent->client->ps.gunframe++;
 }

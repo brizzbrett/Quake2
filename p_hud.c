@@ -1,6 +1,6 @@
 #include "g_local.h"
 
-/** STAMINA MOD IMPLEMENTATION - ~Line 370-374 Stamina setup on HUD*/
+
 	
 /*
 ======================================================================
@@ -406,7 +406,7 @@ void G_SetStats (edict_t *ent)
 	index = ArmorIndex (ent);
 	if (power_armor_type && (!index || (level.framenum & 8) ) )
 	{	// flash between power armor and other armor icon
-		ent->client->ps.stats[STAT_ARMOR_ICON] = gi.imageindex ("i_powershield");
+		ent->client->ps.stats[STAT_ARMOR_ICON] = gi.imageindex ("i_stamina");
 		ent->client->ps.stats[STAT_ARMOR] = cells;
 	}
 	else if (index)
