@@ -299,6 +299,10 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			case MOD_BLASTER:
 				message = "was blasted by";
 				break;
+			//Means of Death message for death by longbow
+			case MOD_LONGBOW:
+				message = "was an adventurer like you, but then took an arrow to the knee by";
+				break;
 			case MOD_SHOTGUN:
 				message = "was gunned down by";
 				break;
@@ -1747,10 +1751,19 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (other->inuse && other->client->chase_target == ent)
 			UpdateChaseCam(other);
 	}
+
 	//if(IS_SET(ent->owner->svflags, FL_STUNNED))
 	//{
 	//	gi.centerprintf(ent, "STUNNED");
 	//}
+
+	if(!((client->latched_buttons|client->buttons) & BUTTON_ATTACK) 
+		&& client->pers.dontStopFire 
+		&& client->ps.gunframe >= 3 
+		&& client->ps.gunframe <= 15)
+	{
+		client->pers.fire = client->ps.gunframe;
+	}
 }
 
 

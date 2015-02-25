@@ -814,6 +814,134 @@ void Weapon_RocketLauncher (edict_t *ent)
 /*
 ======================================================================
 
+LONGBOW
+
+======================================================================
+*/
+
+void Longbow_Fire (edict_t *ent)
+{
+	vec3_t	forward, right;
+	vec3_t	start;
+	vec3_t	offset;
+	int		damage;
+	int		i = 0;
+
+	if (deathmatch->value)
+		damage = 15;
+	else
+		damage = 10;
+	if (is_quad)
+		damage *= 4;
+
+	if(!((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK))
+	{
+		AngleVectors (ent->client->v_angle, forward, right, NULL);
+
+		VectorSet(offset, 24, 8, ent->viewheight-4);
+		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+
+		VectorScale (forward, -2, ent->client->kick_origin);
+		ent->client->kick_angles[0] = -1;
+
+		fire_bow(ent, start, forward, damage, 100*ent->client->pers.fire);
+
+		// send muzzle flash
+		gi.WriteByte (svc_muzzleflash);
+		gi.WriteShort (ent-g_edicts);
+		gi.WriteByte (MZ_BLASTER | is_silenced);
+		gi.multicast (ent->s.origin, MULTICAST_PVS);
+	
+
+		ent->client->ps.gunframe++;
+
+		PlayerNoise(ent, start, PNOISE_WEAPON);
+	}
+}
+
+
+void Weapon_Longbow (edict_t *ent)
+{
+	int fire = ent->client->pers.fire;
+	ent->client->pers.dontStopFire = true;
+
+	if ((ent->client->newweapon) && (ent->client->weaponstate == WEAPON_READY))
+	{
+		ChangeWeapon (ent);
+		return;
+	}
+
+	if (ent->client->weaponstate == WEAPON_ACTIVATING)
+	{
+		ent->client->weaponstate = WEAPON_READY;
+		ent->client->ps.gunframe = fire+2;
+		return;
+	}
+
+	if (ent->client->weaponstate == WEAPON_READY)
+	{
+		if ( ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) )
+		{
+			ent->client->latched_buttons &= ~BUTTON_ATTACK;
+			//if (ent->client->pers.inventory[ent->client->ammo_index])
+			//{
+				ent->client->ps.gunframe = 3;
+				ent->client->weaponstate = WEAPON_FIRING;
+				ent->client->grenade_time = 0;
+			//}
+			//else
+			//{
+				//if (level.time >= ent->pain_debounce_time)
+				//{
+				//	gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+				//	ent->pain_debounce_time = level.time + 1;
+				//}
+				//NoAmmoWeaponChange (ent);
+			//}
+			return;
+		}
+
+		if ((ent->client->ps.gunframe == 29) || (ent->client->ps.gunframe == 34) || (ent->client->ps.gunframe == 39) || (ent->client->ps.gunframe == 48))
+		{
+			if (rand()&15)
+				return;
+		}
+
+		if (++ent->client->ps.gunframe > 48)
+			ent->client->ps.gunframe = fire+2;
+		return;
+	}
+
+	if (ent->client->weaponstate == WEAPON_FIRING)
+	{
+		if (ent->client->ps.gunframe == fire-1)
+		{
+			if (ent->client->buttons & BUTTON_ATTACK)
+			{
+				return;
+			}
+		}
+		
+		if (ent->client->ps.gunframe == fire)
+		{
+			ent->client->weapon_sound = 0;
+			Longbow_Fire (ent);
+			ent->client->pers.dontStopFire = false;
+		}
+
+		ent->client->ps.gunframe++;
+
+		if (ent->client->ps.gunframe == fire+3)
+		{
+			ent->client->grenade_time = 0;
+			ent->client->weaponstate = WEAPON_READY;
+		}
+	}
+}
+
+/*
+======================================================================
+
 BLASTER / HYPERBLASTER
 
 ======================================================================

@@ -181,7 +181,9 @@ MOVETYPE_STEP,			// gravity, special edge handling
 MOVETYPE_FLY,
 MOVETYPE_TOSS,			// gravity
 MOVETYPE_FLYMISSILE,	// extra size to monsters
-MOVETYPE_BOUNCE			//gravity for arrows
+MOVETYPE_BOUNCE,
+MOVETYPE_ARROW			//gravity for arrows for longbow
+
 } movetype_t;
 
 
@@ -216,6 +218,7 @@ typedef struct
 #define WEAP_HYPERBLASTER		9 
 #define WEAP_RAILGUN			10
 #define WEAP_BFG				11
+#define WEAP_LONGBOW			12 // model index for longbow
 
 typedef struct gitem_s
 {
@@ -484,6 +487,7 @@ extern	int	body_armor_index;
 #define MOD_TRIGGER_HURT	31
 #define MOD_HIT				32
 #define MOD_TARGET_BLASTER	33
+#define MOD_LONGBOW			34	//Means of death for longbow
 #define MOD_FRIENDLY_FIRE	0x8000000
 
 extern	int	meansOfDeath;
@@ -720,6 +724,7 @@ void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int 
 void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage);
 void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
 void fire_bfg (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius);
+void fire_bow (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed);
 
 //
 // g_ptrail.c
@@ -844,6 +849,8 @@ typedef struct
 
 	int			power_cubes;	// used for tracking the cubes in coop games
 	int			score;			// for calculating total unit score in coop games
+	int			fire;
+	qboolean	dontStopFire;
 
 	int			game_helpchanged;
 	int			helpchanged;
