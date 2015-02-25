@@ -1762,7 +1762,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		&& client->ps.gunframe >= 3 
 		&& client->ps.gunframe <= 15)
 	{
-		client->pers.fire = client->ps.gunframe;
+		client->pers.bowfire_frame = client->ps.gunframe;
 	}
 }
 

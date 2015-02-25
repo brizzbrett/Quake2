@@ -849,20 +849,19 @@ typedef struct
 
 	int			power_cubes;	// used for tracking the cubes in coop games
 	int			score;			// for calculating total unit score in coop games
-	int			fire;
-	qboolean	dontStopFire;
 
 	int			game_helpchanged;
 	int			helpchanged;
 
 	qboolean	spectator;			// client is a spectator
 
-	/**midterm mod */
-
+	/**MIDTERM MOD IMPLEMENTATION*/
 	int			max_stamina;	/**max stamina for player */
 	float		stamina;		/**current stamina for player */
-
 	float		stamina_regen;	/**regen float for stamina */
+
+	int			bowfire_frame;		// used to calculate gunframe at point mouse is unclicked.
+	qboolean	dontStopFire;	// used to stop bow from continually shooting arrows
 
 } client_persistant_t;
 

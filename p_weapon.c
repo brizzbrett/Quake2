@@ -506,7 +506,7 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 			*/
 			if(ent->client->pers.stamina > 0)
 			{
-				TO_SET(ent->owner->svflags, FL_STUNNED);
+				//TO_SET(ent->owner->svflags, FL_STUNNED);
 				if (ent->client->ps.gunframe == fire_frames[n])
 				{
 					ent->client->pers.stamina -= 5; //Set stamina depletion per fire_frame[n]
@@ -826,11 +826,14 @@ void Longbow_Fire (edict_t *ent)
 	vec3_t	offset;
 	int		damage;
 	int		i = 0;
+	int		unclick_gunframe;
 
+	
+	unclick_gunframe = ent->client->pers.bowfire_frame;
 	if (deathmatch->value)
-		damage = 15;
+		damage = unclick_gunframe;
 	else
-		damage = 10;
+		damage = unclick_gunframe*(2/3);
 	if (is_quad)
 		damage *= 4;
 
@@ -844,7 +847,7 @@ void Longbow_Fire (edict_t *ent)
 		VectorScale (forward, -2, ent->client->kick_origin);
 		ent->client->kick_angles[0] = -1;
 
-		fire_bow(ent, start, forward, damage, 100*ent->client->pers.fire);
+		fire_bow(ent, start, forward, damage, 100*unclick_gunframe);
 
 		// send muzzle flash
 		gi.WriteByte (svc_muzzleflash);
@@ -862,7 +865,7 @@ void Longbow_Fire (edict_t *ent)
 
 void Weapon_Longbow (edict_t *ent)
 {
-	int fire = ent->client->pers.fire;
+	int fire_frame = ent->client->pers.bowfire_frame;
 	ent->client->pers.dontStopFire = true;
 
 	if ((ent->client->newweapon) && (ent->client->weaponstate == WEAPON_READY))
@@ -874,7 +877,7 @@ void Weapon_Longbow (edict_t *ent)
 	if (ent->client->weaponstate == WEAPON_ACTIVATING)
 	{
 		ent->client->weaponstate = WEAPON_READY;
-		ent->client->ps.gunframe = fire+2;
+		ent->client->ps.gunframe = fire_frame+2;
 		return;
 	}
 
@@ -883,21 +886,21 @@ void Weapon_Longbow (edict_t *ent)
 		if ( ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) )
 		{
 			ent->client->latched_buttons &= ~BUTTON_ATTACK;
-			//if (ent->client->pers.inventory[ent->client->ammo_index])
-			//{
+			if (ent->client->pers.inventory[ent->client->ammo_index])
+			{
 				ent->client->ps.gunframe = 3;
 				ent->client->weaponstate = WEAPON_FIRING;
 				ent->client->grenade_time = 0;
-			//}
-			//else
-			//{
-				//if (level.time >= ent->pain_debounce_time)
-				//{
-				//	gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
-				//	ent->pain_debounce_time = level.time + 1;
-				//}
-				//NoAmmoWeaponChange (ent);
-			//}
+			}
+			else
+			{
+				if (level.time >= ent->pain_debounce_time)
+				{
+					gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+					ent->pain_debounce_time = level.time + 1;
+				}
+				NoAmmoWeaponChange (ent);
+			}
 			return;
 		}
 
@@ -908,13 +911,13 @@ void Weapon_Longbow (edict_t *ent)
 		}
 
 		if (++ent->client->ps.gunframe > 48)
-			ent->client->ps.gunframe = fire+2;
+			ent->client->ps.gunframe = fire_frame+2;
 		return;
 	}
 
 	if (ent->client->weaponstate == WEAPON_FIRING)
 	{
-		if (ent->client->ps.gunframe == fire-1)
+		if (ent->client->ps.gunframe == fire_frame-1)
 		{
 			if (ent->client->buttons & BUTTON_ATTACK)
 			{
@@ -922,7 +925,7 @@ void Weapon_Longbow (edict_t *ent)
 			}
 		}
 		
-		if (ent->client->ps.gunframe == fire)
+		if (ent->client->ps.gunframe == fire_frame)
 		{
 			ent->client->weapon_sound = 0;
 			Longbow_Fire (ent);
@@ -931,7 +934,7 @@ void Weapon_Longbow (edict_t *ent)
 
 		ent->client->ps.gunframe++;
 
-		if (ent->client->ps.gunframe == fire+3)
+		if (ent->client->ps.gunframe == fire_frame+2)
 		{
 			ent->client->grenade_time = 0;
 			ent->client->weaponstate = WEAPON_READY;
