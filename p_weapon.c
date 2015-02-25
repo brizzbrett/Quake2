@@ -856,7 +856,8 @@ void Longbow_Fire (edict_t *ent)
 
 void Weapon_Longbow (edict_t *ent)
 {
-	int fire;
+	int fire = ent->client->pers.fire;
+	ent->client->pers.dontStopFire = true;
 
 	if ((ent->client->newweapon) && (ent->client->weaponstate == WEAPON_READY))
 	{
@@ -867,7 +868,7 @@ void Weapon_Longbow (edict_t *ent)
 	if (ent->client->weaponstate == WEAPON_ACTIVATING)
 	{
 		ent->client->weaponstate = WEAPON_READY;
-		ent->client->ps.gunframe = fire+3;
+		ent->client->ps.gunframe = fire+2;
 		return;
 	}
 
@@ -901,24 +902,25 @@ void Weapon_Longbow (edict_t *ent)
 		}
 
 		if (++ent->client->ps.gunframe > 48)
-			ent->client->ps.gunframe = fire+3;
+			ent->client->ps.gunframe = fire+2;
 		return;
 	}
 
 	if (ent->client->weaponstate == WEAPON_FIRING)
 	{
-		if (ent->client->ps.gunframe == fire)
+		if (ent->client->ps.gunframe == fire-1)
 		{
 			if (ent->client->buttons & BUTTON_ATTACK)
 			{
 				return;
 			}
 		}
-
-		if (ent->client->ps.gunframe == fire+1)
+		
+		if (ent->client->ps.gunframe == fire)
 		{
 			ent->client->weapon_sound = 0;
 			Longbow_Fire (ent);
+			ent->client->pers.dontStopFire = false;
 		}
 
 		ent->client->ps.gunframe++;

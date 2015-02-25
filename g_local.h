@@ -843,6 +843,8 @@ typedef struct
 
 	int			power_cubes;	// used for tracking the cubes in coop games
 	int			score;			// for calculating total unit score in coop games
+	int			fire;
+	qboolean	dontStopFire;
 
 	int			game_helpchanged;
 	int			helpchanged;

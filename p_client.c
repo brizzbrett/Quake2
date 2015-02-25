@@ -1736,6 +1736,13 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (other->inuse && other->client->chase_target == ent)
 			UpdateChaseCam(other);
 	}
+	if(!((client->latched_buttons|client->buttons) & BUTTON_ATTACK) 
+		&& client->pers.dontStopFire 
+		&& client->ps.gunframe >= 3 
+		&& client->ps.gunframe <= 15)
+	{
+		client->pers.fire = client->ps.gunframe;
+	}
 }
 
 
