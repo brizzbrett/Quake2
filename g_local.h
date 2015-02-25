@@ -862,6 +862,7 @@ typedef struct
 
 	int			bowfire_frame;		// used to calculate gunframe at point mouse is unclicked.
 	qboolean	dontStopFire;	// used to stop bow from continually shooting arrows
+	qboolean	crossbow;
 
 } client_persistant_t;
 

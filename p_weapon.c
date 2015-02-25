@@ -536,7 +536,6 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 	}
 }
 
-
 /*
 ======================================================================
 
@@ -814,26 +813,17 @@ void Weapon_RocketLauncher (edict_t *ent)
 /*
 ======================================================================
 
-LONGBOW
+LONGBOW/CROSSBOW
 
 ======================================================================
 */
 
-void Longbow_Fire (edict_t *ent)
+void Bow_Fire (edict_t *ent,vec3_t g_offset, int damage, int unclick_gunframe)
 {
 	vec3_t	forward, right;
 	vec3_t	start;
 	vec3_t	offset;
-	int		damage;
-	int		i = 0;
-	int		unclick_gunframe;
 
-	
-	unclick_gunframe = ent->client->pers.bowfire_frame;
-	if (deathmatch->value)
-		damage = unclick_gunframe;
-	else
-		damage = unclick_gunframe*(2/3);
 	if (is_quad)
 		damage *= 4;
 
@@ -842,6 +832,7 @@ void Longbow_Fire (edict_t *ent)
 		AngleVectors (ent->client->v_angle, forward, right, NULL);
 
 		VectorSet(offset, 24, 8, ent->viewheight-4);
+		VectorAdd(offset, g_offset, offset);
 		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 		VectorScale (forward, -2, ent->client->kick_origin);
@@ -854,18 +845,49 @@ void Longbow_Fire (edict_t *ent)
 		gi.WriteShort (ent-g_edicts);
 		gi.WriteByte (MZ_BLASTER | is_silenced);
 		gi.multicast (ent->s.origin, MULTICAST_PVS);
-	
-
-		ent->client->ps.gunframe++;
 
 		PlayerNoise(ent, start, PNOISE_WEAPON);
 	}
 }
-
-
-void Weapon_Longbow (edict_t *ent)
+void Weapon_Longbow_Fire(edict_t *ent)
 {
-	int fire_frame = ent->client->pers.bowfire_frame;
+	int		damage;
+	int		unclick_gunframe;
+
+	
+	unclick_gunframe = ent->client->pers.bowfire_frame;
+	if (deathmatch->value)
+		damage = unclick_gunframe;
+	else
+		damage = unclick_gunframe*(2/3);
+	Bow_Fire(ent,vec3_origin,damage,unclick_gunframe);
+
+	ent->client->ps.gunframe++;
+}
+
+void Weapon_Crossbow_Fire(edict_t *ent)
+{
+	int		damage;
+
+	if (deathmatch->value)
+		damage = 11*1.5;
+	else
+		damage = 11;
+	Bow_Fire(ent,vec3_origin,damage,11);
+
+	ent->client->ps.gunframe++;
+}
+
+/*
+================
+Weapon_Generic_Bow
+
+A generic function to handle the basics of bow thinking
+================
+*/
+void Weapon_Generic_Bow (edict_t *ent, int fire_frame, qboolean longbow)
+{
+	
 	ent->client->pers.dontStopFire = true;
 
 	if ((ent->client->newweapon) && (ent->client->weaponstate == WEAPON_READY))
@@ -919,7 +941,7 @@ void Weapon_Longbow (edict_t *ent)
 	{
 		if (ent->client->ps.gunframe == fire_frame-1)
 		{
-			if (ent->client->buttons & BUTTON_ATTACK)
+			if ((ent->client->buttons & BUTTON_ATTACK) && longbow)
 			{
 				return;
 			}
@@ -928,7 +950,12 @@ void Weapon_Longbow (edict_t *ent)
 		if (ent->client->ps.gunframe == fire_frame)
 		{
 			ent->client->weapon_sound = 0;
-			Longbow_Fire (ent);
+			if(longbow)
+				Weapon_Longbow_Fire(ent);
+			else
+				Weapon_Crossbow_Fire(ent);
+
+			ent->client->pers.stamina -= ent->client->pers.bowfire_frame*2;
 			ent->client->pers.dontStopFire = false;
 		}
 
@@ -940,6 +967,16 @@ void Weapon_Longbow (edict_t *ent)
 			ent->client->weaponstate = WEAPON_READY;
 		}
 	}
+}
+
+void Weapon_Longbow(edict_t *ent)
+{
+	Weapon_Generic_Bow(ent, ent->client->pers.bowfire_frame, true);
+}
+
+void Weapon_Crossbow(edict_t *ent)
+{
+	Weapon_Generic_Bow(ent, 11, false);
 }
 
 /*

@@ -17,6 +17,7 @@ void Weapon_GrenadeLauncher (edict_t *ent);
 void Weapon_Railgun (edict_t *ent);
 void Weapon_BFG (edict_t *ent);
 void Weapon_Longbow(edict_t *ent); //longbow
+void Weapon_Crossbow(edict_t *ent); //crossbow
 
 gitem_armor_t jacketarmor_info	= { 25,  50, .30, .00, ARMOR_JACKET};
 gitem_armor_t combatarmor_info	= { 50, 100, .60, .30, ARMOR_COMBAT};
@@ -1413,7 +1414,7 @@ always owned, never in the world
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
-		Weapon_GrenadeLauncher,
+		Weapon_Crossbow,
 		"misc/w_pkup.wav",
 		"models/weapons/g_launch/tris.md2", EF_ROTATE,
 		"models/weapons/v_launch/tris.md2",
