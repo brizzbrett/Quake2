@@ -1117,5 +1117,7 @@ struct edict_s
 	float		stamina;
 	float		stamina_regen;
 
+	int ClassSpeed;
+
 };
 

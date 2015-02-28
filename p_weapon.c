@@ -821,27 +821,19 @@ void Bow_Fire (edict_t *ent,vec3_t g_offset, int damage, int unclick_gunframe)
 	if (is_quad)
 		damage *= 4;
 
-	if(!((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK))
-	{
-		AngleVectors (ent->client->v_angle, forward, right, NULL);
+	AngleVectors (ent->client->v_angle, forward, right, NULL);
 
-		VectorSet(offset, 24, 8, ent->viewheight-4);
-		VectorAdd(offset, g_offset, offset);
-		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet(offset, 24, 8, ent->viewheight-4);
+	VectorAdd(offset, g_offset, offset);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
-		VectorScale (forward, -2, ent->client->kick_origin);
-		ent->client->kick_angles[0] = -1;
+	VectorScale (forward, -2, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -1;
 
-		fire_bow(ent, start, forward, damage, 100*unclick_gunframe);
+	gi.sound (ent, CHAN_VOICE, gi.soundindex ("berserk/bow.wav"), 1, ATTN_NORM, 0);
+	fire_bow(ent, start, forward, damage, 100*unclick_gunframe);
 
-		// send muzzle flash
-		gi.WriteByte (svc_muzzleflash);
-		gi.WriteShort (ent-g_edicts);
-		gi.WriteByte (MZ_BLASTER | is_silenced);
-		gi.multicast (ent->s.origin, MULTICAST_PVS);
-
-		PlayerNoise(ent, start, PNOISE_WEAPON);
-	}
+	PlayerNoise(ent, start, PNOISE_WEAPON);
 }
 void Weapon_Longbow_Fire(edict_t *ent)
 {
@@ -879,7 +871,7 @@ Weapon_Generic_Bow
 A generic function to handle the basics of bow thinking
 ================
 */
-void Weapon_Generic_Bow (edict_t *ent, int fire_frame, qboolean longbow)
+void Weapon_Generic_Bow (edict_t *ent, int fire_frame, qboolean crossbow)
 {
 	
 	ent->client->pers.dontStopFire = true;
@@ -935,7 +927,7 @@ void Weapon_Generic_Bow (edict_t *ent, int fire_frame, qboolean longbow)
 	{
 		if (ent->client->ps.gunframe == fire_frame-1)
 		{
-			if ((ent->client->buttons & BUTTON_ATTACK) && longbow)
+			if ((ent->client->buttons & BUTTON_ATTACK) && !crossbow)
 			{
 				return;
 			}
@@ -943,14 +935,15 @@ void Weapon_Generic_Bow (edict_t *ent, int fire_frame, qboolean longbow)
 		
 		if (ent->client->ps.gunframe == fire_frame)
 		{
-			ent->client->weapon_sound = 0;
-			if(longbow)
-				Weapon_Longbow_Fire(ent);
-			else
+			if(crossbow)
 				Weapon_Crossbow_Fire(ent);
+			else
+			{
+				Weapon_Longbow_Fire(ent);
+				ent->client->pers.dontStopFire = false;
+			}
 
 			ent->client->pers.stamina -= ent->client->pers.bowfire_frame*2;
-			ent->client->pers.dontStopFire = false;
 		}
 
 		ent->client->ps.gunframe++;
@@ -965,12 +958,12 @@ void Weapon_Generic_Bow (edict_t *ent, int fire_frame, qboolean longbow)
 
 void Weapon_Longbow(edict_t *ent)
 {
-	Weapon_Generic_Bow(ent, ent->client->pers.bowfire_frame, true);
+	Weapon_Generic_Bow(ent, ent->client->pers.bowfire_frame, false);
 }
 
 void Weapon_Crossbow(edict_t *ent)
 {
-	Weapon_Generic_Bow(ent, 11, false);
+	Weapon_Generic_Bow(ent, 11, true);
 }
 
 /*

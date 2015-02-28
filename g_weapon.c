@@ -331,11 +331,9 @@ void fire_bow (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed)
 	arrow->movetype = MOVETYPE_ARROW;
 	arrow->clipmask = MASK_SHOT;
 	arrow->solid = SOLID_BBOX;
-	arrow->s.effects |= EF_GIB;
 	VectorClear (arrow->mins);
 	VectorClear (arrow->maxs);
 	arrow->s.modelindex = gi.modelindex ("models/objects/laser/tris.md2");
-	arrow->s.sound = gi.soundindex ("misc/lasfly.wav");
 	arrow->owner = self;
 	arrow->touch = bow_touch;
 	arrow->nextthink = level.time + 2;
