@@ -276,6 +276,53 @@ void fire_shotgun (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int k
 		fire_lead (self, start, aimdir, damage, kick, TE_SHOTGUN, hspread, vspread, mod);
 }
 /*
+=============
+fire_sword
+
+Attacks with a single hit from sword.
+=============
+*/
+
+void fire_sword(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick)
+{
+
+	trace_t		tr;         
+				
+	vec3_t		end;
+	int			i;
+
+	tr = gi.trace (self->s.origin, NULL, NULL, start, self, MASK_SHOT);
+	
+	if (tr.fraction == 1.0)
+	{
+
+		VectorMA(start, 30, aimdir, end);
+		tr = gi.trace (self->s.origin, NULL, NULL, end, self, MASK_SHOT);
+
+		if (tr.fraction < 1.0)
+		{
+			if (tr.ent->takedamage)
+			{
+				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, 0);
+			}
+			gi.sound (self, CHAN_AUTO, gi.soundindex("berserk/sword.wav") , 1, ATTN_NORM, 0);
+		}
+	}
+	if(tr.fraction < 1.0)
+	{
+		gi.WriteByte (svc_temp_entity);
+		gi.WriteByte (TE_SPARKS);
+		gi.WritePosition (tr.endpos);
+		gi.WriteDir (tr.plane.normal);
+		gi.multicast (tr.endpos, MULTICAST_PVS);
+
+		if (self->client)
+			PlayerNoise(self, tr.endpos, PNOISE_IMPACT);
+	}
+		
+	return;
+}
+/*
 =================
 fire_bow
 

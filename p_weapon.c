@@ -503,7 +503,7 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 				//TO_SET(ent->owner->svflags, FL_STUNNED);
 				if (ent->client->ps.gunframe == fire_frames[n])
 				{
-					ent->client->pers.stamina -= 5; //Set stamina depletion per fire_frame[n]
+					ent->client->pers.stamina -= stamina_loss; //Set stamina depletion per fire_frame[n]
 					ent->client->pers.stamina_regen = 0; //Sets stamina_regen to 0 while firing
 
 					if (ent->client->quad_framenum > level.framenum){
@@ -744,7 +744,7 @@ void Weapon_GrenadeLauncher (edict_t *ent)
 	static int	pause_frames[]	= {34, 51, 59, 0};
 	static int	fire_frames[]	= {6, 0};
 
-	Weapon_Generic (ent, 5, 16, 59, 64, pause_frames, fire_frames, weapon_grenadelauncher_fire,60);
+	Weapon_Generic (ent, 5, 16, 59, 64, pause_frames, fire_frames, weapon_grenadelauncher_fire,20);
 }
 
 /*
@@ -800,9 +800,53 @@ void Weapon_RocketLauncher (edict_t *ent)
 	static int	pause_frames[]	= {25, 33, 42, 50, 0};
 	static int	fire_frames[]	= {5, 0};
 
-	Weapon_Generic (ent, 4, 12, 50, 54, pause_frames, fire_frames, Weapon_RocketLauncher_Fire, 50);
+	Weapon_Generic (ent, 4, 12, 50, 54, pause_frames, fire_frames, Weapon_RocketLauncher_Fire, 25);
 }
 
+/*
+======================================================================
+
+SWORD
+
+======================================================================
+*/
+void Sword_Fire (edict_t *ent, vec3_t g_offset, int damage)
+{
+	vec3_t  forward, right;
+	vec3_t  start;
+	vec3_t  offset;
+
+	if (is_quad)
+		damage *= 4;
+	AngleVectors (ent->client->v_angle, forward, right, NULL);
+	VectorSet(offset, 24, 8, ent->viewheight-8);
+	VectorAdd (offset, g_offset, offset);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+
+	VectorScale (forward, -2, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -1;
+
+	fire_sword (ent, start, forward, damage, 100 );
+	gi.sound(ent, CHAN_AUTO, gi.soundindex("berserk/swordswing.wav"), 1, ATTN_NORM, 0);
+}
+
+void Weapon_Sword_Fire (edict_t *ent)
+{
+	int damage;
+	if (deathmatch->value)
+		damage = 40;
+	else
+		damage = 30;
+	Sword_Fire (ent, vec3_origin, damage);
+	ent->client->ps.gunframe++;
+}
+void Weapon_Sword (edict_t *ent)
+{
+	static int      pause_frames[]  = {19, 32, 0};
+	static int      fire_frames[]   = {12, 0};
+
+	Weapon_Generic (ent, 11, 15, 48, 49, pause_frames, fire_frames, Weapon_Sword_Fire, 20);
+}
 
 /*
 ======================================================================

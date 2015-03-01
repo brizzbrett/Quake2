@@ -725,6 +725,7 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
 void fire_bfg (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius);
 void fire_bow (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed);
+void fire_sword ( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
 
 //
 // g_ptrail.c
