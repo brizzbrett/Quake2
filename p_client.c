@@ -994,6 +994,8 @@ void respawn (edict_t *self)
 
 		self->client->respawn_time = level.time;
 
+		self->client->pers.time_buff = 0;
+
 		return;
 	}
 
@@ -1589,7 +1591,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	level.current_entity = ent;
 	client = ent->client;
-
 	if (level.intermissiontime)
 	{
 		client->ps.pmove.pm_type = PM_FREEZE;
@@ -1654,7 +1655,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			ent->s.origin[i] = pm.s.origin[i]*0.125;
 			ent->velocity[i] = pm.s.velocity[i]*0.125;
 		}
-
 		VectorCopy (pm.mins, ent->mins);
 		VectorCopy (pm.maxs, ent->maxs);
 
@@ -1755,11 +1755,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			UpdateChaseCam(other);
 	}
 
-	//if(IS_SET(ent->owner->svflags, FL_STUNNED))
-	//{
-	//	gi.centerprintf(ent, "STUNNED");
-	//}
-
 	if(!((client->latched_buttons|client->buttons) & BUTTON_ATTACK) 
 		&& client->pers.dontStopFire 
 		&& client->ps.gunframe >= 3 
@@ -1767,6 +1762,32 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	{
 		client->pers.bowfire_frame = client->ps.gunframe;
 	}
+	gi.centerprintf(ent, "V1: %i, V2: %i",(int)ent->velocity[0],(int)ent->velocity[1]);
+	if(ent->velocity[0] > 220 || ent->velocity[1] > 220
+		|| ent->velocity[0] < -220 || ent->velocity[1] < -220)
+	{
+		if(ent->client->pers.stamina > 0)
+		{
+			ent->client->pers.stamina -= 1;
+		}
+		if(ent->client->pers.stamina <= 5)
+		{
+			if(ent->velocity[0] > 220)
+				ent->velocity[0] = 219;
+			if(ent->velocity[1] > 220)
+				ent->velocity[1] = 219;
+			if(ent->velocity[0] < -220)
+				ent->velocity[0] = -219;
+			if(ent->velocity[1] < -220)
+				ent->velocity[1] = -219;
+
+			return;
+		}
+	}
+
+	if(IS_SET(ent->flags, FL_BLOCKING))
+		gi.centerprintf(ent, "blocking");
+
 }
 
 
@@ -1794,10 +1815,7 @@ void ClientBeginServerFrame (edict_t *ent)
 	else
 		client->pers.stamina = client->pers.max_stamina;
 
-
-	gi.cprintf(ent, PRINT_HIGH, "Stamina: %i / %i\n",(int)client->pers.stamina,client->pers.max_stamina);
-	gi.centerprintf(ent,"Stamina: %i / %i\n",(int)client->pers.stamina,client->pers.max_stamina);
-	/**end*/
+	//gi.centerprintf(ent,"Stamina: %i / %i\n",(int)client->pers.stamina,client->pers.max_stamina);
 
 	if (deathmatch->value &&
 		client->pers.spectator != client->resp.spectator &&

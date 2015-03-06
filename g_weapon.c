@@ -298,7 +298,6 @@ void fire_sword(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 
 		VectorMA(start, 30, aimdir, end);
 		tr = gi.trace (self->s.origin, NULL, NULL, end, self, MASK_SHOT);
-
 		if (tr.fraction < 1.0)
 		{
 			if (tr.ent->takedamage)
@@ -378,7 +377,7 @@ void fire_bow (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed)
 	arrow->movetype = MOVETYPE_ARROW;
 	arrow->clipmask = MASK_SHOT;
 	arrow->solid = SOLID_BBOX;
-	arrow->s.effects |= EF_GIB;
+	arrow->s.effects |= EF_FLAG2;
 	VectorClear (arrow->mins);
 	VectorClear (arrow->maxs);
 	arrow->s.modelindex = gi.modelindex ("models/objects/laser/tris.md2");
@@ -413,6 +412,7 @@ Fires a single blaster bolt.  Used by the blaster and hyper blaster.
 void blaster_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
 	int		mod;
+	
 
 	if (other == self->owner)
 		return;

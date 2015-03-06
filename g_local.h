@@ -48,13 +48,14 @@
 #define	FL_TEAMSLAVE			0x00000400	// not the first on the team
 #define FL_NO_KNOCKBACK			0x00000800
 #define FL_POWER_ARMOR			0x00001000	// power armor (if any) is active
-#define FL_STUNNED				0x00002000	
+#define FL_BLOCKING				0x00002000	
 #define FL_RESPAWN				0x80000000	// used for item respawning
 
 #define IS_SET(a,b) ((a) & (b))		//a = ent->owner->svflags
 #define TO_SET(a,b) ((a) |= (b))	//b = whatever flag y'all wanna use
 #define TO_REMOVE(a,b) ((a) &= ~(b))
 
+#define DAMAGE			0
 
 #define	FRAMETIME		0.1
 
@@ -828,6 +829,8 @@ typedef struct
 
 	qboolean	connected;			// a loadgame will leave valid entities that
 									// just don't have a connection yet
+
+	int			time_buff;
 
 	// values saved and restored from edicts when changing levels
 	int			health;

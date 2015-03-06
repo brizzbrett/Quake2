@@ -305,7 +305,6 @@ void Cmd_God_f (edict_t *ent)
 	gi.cprintf (ent, PRINT_HIGH, msg);
 }
 
-
 /*
 ==================
 Cmd_Notarget_f
@@ -884,6 +883,11 @@ void Cmd_PlayerList_f(edict_t *ent)
 	}
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
+void Cmd_Block_f(edict_t *ent)
+{
+	TO_SET(ent->flags, FL_BLOCKING);
+	
+}
 
 
 /*
@@ -973,6 +977,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
+	else if (Q_stricmp(cmd, "block") == 0)
+		Cmd_Block_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }
