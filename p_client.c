@@ -573,7 +573,6 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 			gi.sound (self, CHAN_VOICE, gi.soundindex(va("*death%i.wav", (rand()%4)+1)), 1, ATTN_NORM, 0);
 		}
 	}
-
 	self->deadflag = DEAD_DEAD;
 
 	gi.linkentity (self);
@@ -994,7 +993,6 @@ void respawn (edict_t *self)
 
 		self->client->respawn_time = level.time;
 
-		self->client->pers.time_buff = 0;
 
 		return;
 	}
@@ -1207,7 +1205,7 @@ void PutClientInServer (edict_t *ent)
 	client->ps.gunindex = gi.modelindex(client->pers.weapon->view_model);
 
 	// clear entity state values
-	ent->s.effects = 0;
+	//ent->s.effects = 0;
 	ent->s.modelindex = 255;		// will use the skin specified model
 	ent->s.modelindex2 = 255;		// custom gun model
 	// sknum is player num and weapon number
@@ -1755,6 +1753,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			UpdateChaseCam(other);
 	}
 
+	/*For bow and crossbow use. */
 	if(!((client->latched_buttons|client->buttons) & BUTTON_ATTACK) 
 		&& client->pers.dontStopFire 
 		&& client->ps.gunframe >= 3 
@@ -1762,6 +1761,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	{
 		client->pers.bowfire_frame = client->ps.gunframe;
 	}
+
+	//print velocities for testing purposes
 	gi.centerprintf(ent, "V1: %i, V2: %i",(int)ent->velocity[0],(int)ent->velocity[1]);
 	if(ent->velocity[0] > 220 || ent->velocity[1] > 220
 		|| ent->velocity[0] < -220 || ent->velocity[1] < -220)
@@ -1769,25 +1770,37 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if(ent->client->pers.stamina > 0)
 		{
 			ent->client->pers.stamina -= 1;
+			ent->client->pers.stamina_regen = 0;
 		}
-		if(ent->client->pers.stamina <= 5)
+		if(ent->client->pers.stamina <= 0)
 		{
-			if(ent->velocity[0] > 220)
-				ent->velocity[0] = 219;
-			if(ent->velocity[1] > 220)
-				ent->velocity[1] = 219;
-			if(ent->velocity[0] < -220)
-				ent->velocity[0] = -219;
-			if(ent->velocity[1] < -220)
-				ent->velocity[1] = -219;
-
-			return;
+			ent->client->pers.stamina = -30;
+			ent->client->pers.stamina_regen = 4;
+			TO_SET(ent->flags, FL_STUNNED);
+			TO_REMOVE(ent->flags, FL_BLOCKING);
+			ent->client->invincible_framenum = level.framenum - 300;
 		}
 	}
-
 	if(IS_SET(ent->flags, FL_BLOCKING))
-		gi.centerprintf(ent, "blocking");
+	{
+		ent->client->pers.stamina_regen = 0.5;
+		ent->client->invincible_framenum = level.framenum + 300;
+		return;
 
+	}
+	if(IS_SET(ent->flags, FL_STUNNED))
+	{
+		TO_REMOVE(ent->flags, FL_BLOCKING);
+		if(ent->client->pers.stamina < 50)
+		{
+				ent->velocity[0] = 0;		
+				ent->velocity[1] = 0;
+		}
+		else
+		{
+			TO_REMOVE(ent->flags, FL_STUNNED);
+		}
+	}
 }
 
 

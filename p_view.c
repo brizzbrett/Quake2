@@ -429,14 +429,14 @@ void SV_CalcBlend (edict_t *ent)
 		if (remaining > 30 || (remaining & 4) )
 			SV_AddBlend (0, 0, 1, 0.08, ent->client->ps.blend);
 	}
-	else if (ent->client->invincible_framenum > level.framenum)
-	{
-		remaining = ent->client->invincible_framenum - level.framenum;
-		if (remaining == 30)	// beginning to fade
-			gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect2.wav"), 1, ATTN_NORM, 0);
-		if (remaining > 30 || (remaining & 4) )
-			SV_AddBlend (1, 1, 0, 0.08, ent->client->ps.blend);
-	}
+	//else if (ent->client->invincible_framenum > level.framenum)
+	//{
+		//remaining = ent->client->invincible_framenum - level.framenum;
+		//if (remaining == 30)	// beginning to fade
+		//	gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect2.wav"), 1, ATTN_NORM, 0);
+		//if (remaining > 30 || (remaining & 4) )
+		//	SV_AddBlend (1, 1, 0, 0.08, ent->client->ps.blend);
+	//}
 	else if (ent->client->enviro_framenum > level.framenum)
 	{
 		remaining = ent->client->enviro_framenum - level.framenum;
@@ -728,8 +728,8 @@ void G_SetClientEffects (edict_t *ent)
 	int		pa_type;
 	int		remaining;
 
-	ent->s.effects = 0;
-	ent->s.renderfx = 0;
+	ent->s.effects |= EF_COLOR_SHELL;
+	ent->s.renderfx |= RF_SHELL_BLUE;
 
 	if (ent->health <= 0 || level.intermissiontime)
 		return;
@@ -755,12 +755,12 @@ void G_SetClientEffects (edict_t *ent)
 			ent->s.effects |= EF_QUAD;
 	}
 
-	if (ent->client->invincible_framenum > level.framenum)
-	{
-		remaining = ent->client->invincible_framenum - level.framenum;
-		if (remaining > 30 || (remaining & 4) )
-			ent->s.effects |= EF_PENT;
-	}
+	//if (ent->client->invincible_framenum > level.framenum)
+	//{
+	//	remaining = ent->client->invincible_framenum - level.framenum;
+	//	if (remaining > 30 || (remaining & 4) )
+	//		ent->s.effects |= EF_PENT;
+	//}
 
 	// show cheaters!!!
 	if (ent->flags & FL_GODMODE)

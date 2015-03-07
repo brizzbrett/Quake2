@@ -289,7 +289,6 @@ void fire_sword(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 	trace_t		tr;         
 				
 	vec3_t		end;
-	int			i;
 
 	tr = gi.trace (self->s.origin, NULL, NULL, start, self, MASK_SHOT);
 	

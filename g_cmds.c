@@ -886,9 +886,23 @@ void Cmd_PlayerList_f(edict_t *ent)
 void Cmd_Block_f(edict_t *ent)
 {
 	TO_SET(ent->flags, FL_BLOCKING);
-	
+	gi.centerprintf(ent, "Blocking is active.");
 }
-
+void Cmd_Unblock_f(edict_t *ent)
+{
+	ent->client->invincible_framenum = level.framenum - 300;
+	TO_REMOVE(ent->flags, FL_BLOCKING);
+	gi.centerprintf(ent, "Blocking is inactive.");
+}
+void Cmd_DodgeRight_f(edict_t *ent)
+{
+	if(ent->velocity[0] < 0)
+		ent->velocity[1] +=( ent->velocity[1] + 500);
+	else if(ent->velocity[0] == 0)
+		ent->velocity[1] += 500;
+	else
+		ent->velocity[1] += 500;
+}
 
 /*
 =================
@@ -898,6 +912,7 @@ ClientCommand
 void ClientCommand (edict_t *ent)
 {
 	char	*cmd;
+	int		i = 0;
 
 	if (!ent->client)
 		return;		// not fully in game yet
@@ -979,6 +994,10 @@ void ClientCommand (edict_t *ent)
 		Cmd_PlayerList_f(ent);
 	else if (Q_stricmp(cmd, "block") == 0)
 		Cmd_Block_f(ent);
+	else if(Q_stricmp(cmd, "unblock") == 0)
+		Cmd_Unblock_f(ent);
+	else if(Q_stricmp(cmd, "dodge") == 0)
+		Cmd_DodgeRight_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

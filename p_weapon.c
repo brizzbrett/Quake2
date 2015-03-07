@@ -498,9 +498,8 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 			/**If stamina is higher than 0, execute fire_frames normally
 				If its not, bullets stop shooting.
 			*/
-			if(ent->client->pers.stamina > 0)
+			if(!IS_SET(ent->flags, FL_STUNNED))
 			{
-				//TO_SET(ent->owner->svflags, FL_STUNNED);
 				if (ent->client->ps.gunframe == fire_frames[n])
 				{
 					ent->client->pers.stamina -= stamina_loss; //Set stamina depletion per fire_frame[n]

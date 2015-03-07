@@ -364,6 +364,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	int			psave;
 	int			te_sparks;
 
+
 	if (!targ->takedamage)
 		return;
 
