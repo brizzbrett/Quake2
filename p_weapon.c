@@ -500,17 +500,20 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 			*/
 			if(!IS_SET(ent->flags, FL_STUNNED))
 			{
-				if (ent->client->ps.gunframe == fire_frames[n])
+				if(!IS_SET(ent->flags, FL_BLOCKING))
 				{
-					ent->client->pers.stamina -= stamina_loss; //Set stamina depletion per fire_frame[n]
-					ent->client->pers.stamina_regen = 0; //Sets stamina_regen to 0 while firing
+					if (ent->client->ps.gunframe == fire_frames[n])
+					{
+						ent->client->pers.stamina -= stamina_loss; //Set stamina depletion per fire_frame[n]
+						ent->client->pers.stamina_regen = 0; //Sets stamina_regen to 0 while firing
 
-					if (ent->client->quad_framenum > level.framenum){
-						gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage3.wav"), 1, ATTN_NORM, 0);
+						if (ent->client->quad_framenum > level.framenum){
+							gi.sound(ent, CHAN_ITEM, gi.soundindex("items/damage3.wav"), 1, ATTN_NORM, 0);
+						}
+
+						fire (ent);
+						break;
 					}
-
-					fire (ent);
-					break;
 				}
 			}
 			if(ent->client->pers.stamina <= 0)

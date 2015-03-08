@@ -1763,9 +1763,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	}
 
 	//print velocities for testing purposes
-	gi.centerprintf(ent, "V1: %i, V2: %i",(int)ent->velocity[0],(int)ent->velocity[1]);
-	if(ent->velocity[0] > 220 || ent->velocity[1] > 220
-		|| ent->velocity[0] < -220 || ent->velocity[1] < -220)
+	//gi.centerprintf(ent, "V1: %i, V2: %i",(int)ent->velocity[0],(int)ent->velocity[1]);
+	if(ent->velocity[0] > 240 || ent->velocity[1] > 240
+		|| ent->velocity[0] < -240 || ent->velocity[1] < -240)
 	{
 		if(ent->client->pers.stamina > 0)
 		{
@@ -1775,10 +1775,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if(ent->client->pers.stamina <= 0)
 		{
 			ent->client->pers.stamina = -30;
-			ent->client->pers.stamina_regen = 4;
-			TO_SET(ent->flags, FL_STUNNED);
-			TO_REMOVE(ent->flags, FL_BLOCKING);
-			ent->client->invincible_framenum = level.framenum - 300;
 		}
 	}
 	if(IS_SET(ent->flags, FL_BLOCKING))
@@ -1791,8 +1787,11 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	if(IS_SET(ent->flags, FL_STUNNED))
 	{
 		TO_REMOVE(ent->flags, FL_BLOCKING);
+		ent->client->pers.stamina_regen = 4;
+		ent->client->invincible_framenum = level.framenum - 300;
 		if(ent->client->pers.stamina < 50)
 		{
+				ent->client->pers.stamina_regen = 10;
 				ent->velocity[0] = 0;		
 				ent->velocity[1] = 0;
 		}
@@ -1800,6 +1799,11 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		{
 			TO_REMOVE(ent->flags, FL_STUNNED);
 		}
+	}
+	if(ent->client->pers.stamina <= 0)
+	{
+		TO_SET(ent->flags, FL_STUNNED);
+		TO_REMOVE(ent->flags, FL_BLOCKING);
 	}
 }
 
