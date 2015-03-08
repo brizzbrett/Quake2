@@ -380,7 +380,7 @@ void fire_bow (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed)
 	VectorClear (arrow->mins);
 	VectorClear (arrow->maxs);
 	arrow->s.modelindex = gi.modelindex ("models/objects/laser/tris.md2");
-	arrow->s.sound = gi.soundindex ("misc/lasfly.wav");
+	arrow->s.sound = gi.soundindex ("berserk/bow.wav");
 	arrow->owner = self;
 	arrow->touch = bow_touch;
 	arrow->nextthink = level.time + 2;

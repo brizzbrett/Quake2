@@ -495,10 +495,12 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 	{
 		for (n = 0; fire_frames[n]; n++)
 		{	
-			/**If stamina is higher than 0, execute fire_frames normally
-				If its not, bullets stop shooting.
+			/*
+			 *	If stamina is higher than 0, execute fire_frames normally
+			 *	If its not, bullets stop shooting. 
+			 *	Also, if stun flag and blocking flags are not set.
 			*/
-			if(!IS_SET(ent->flags, FL_STUNNED))
+			if(ent->client->pers.stamina > 0)
 			{
 				if(!IS_SET(ent->flags, FL_BLOCKING))
 				{
@@ -989,9 +991,11 @@ void Weapon_Generic_Bow (edict_t *ent, int fire_frame, qboolean longbow)
 		
 		if (ent->client->ps.gunframe == fire_frame)
 		{
-			ent->client->weapon_sound = 0;
 			if(longbow)
+			{
 				Weapon_Longbow_Fire(ent);
+				gi.sound(ent, CHAN_VOICE, gi.soundindex("berserk.wav"), 1, ATTN_NORM, 0);
+			}
 			else
 				Weapon_Crossbow_Fire(ent);
 
