@@ -869,27 +869,19 @@ void Bow_Fire (edict_t *ent,vec3_t g_offset, int damage, int unclick_gunframe)
 	if (is_quad)
 		damage *= 4;
 
-	if(!((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK))
-	{
-		AngleVectors (ent->client->v_angle, forward, right, NULL);
+	AngleVectors (ent->client->v_angle, forward, right, NULL);
 
-		VectorSet(offset, 24, 8, ent->viewheight-4);
-		VectorAdd(offset, g_offset, offset);
-		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet(offset, 24, 8, ent->viewheight-4);
+	VectorAdd(offset, g_offset, offset);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
-		VectorScale (forward, -2, ent->client->kick_origin);
-		ent->client->kick_angles[0] = -1;
+	VectorScale (forward, -2, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -1;
 
-		fire_bow(ent, start, forward, damage, 100*unclick_gunframe);
+	gi.sound (ent, CHAN_VOICE, gi.soundindex ("berserk/bow.wav"), 1, ATTN_NORM, 0);
+	fire_bow(ent, start, forward, damage, 100*unclick_gunframe);
 
-		// send muzzle flash
-		gi.WriteByte (svc_muzzleflash);
-		gi.WriteShort (ent-g_edicts);
-		gi.WriteByte (MZ_BLASTER | is_silenced);
-		gi.multicast (ent->s.origin, MULTICAST_PVS);
-
-		PlayerNoise(ent, start, PNOISE_WEAPON);
-	}
+	PlayerNoise(ent, start, PNOISE_WEAPON);
 }
 void Weapon_Longbow_Fire(edict_t *ent)
 {
@@ -989,18 +981,24 @@ void Weapon_Generic_Bow (edict_t *ent, int fire_frame, qboolean longbow)
 			}
 		}
 		
-		if (ent->client->ps.gunframe == fire_frame)
+		if (ent->client->ps.gunframe == fire_frame && !IS_SET(ent->flags, FL_BLOCKING))
 		{
 			if(longbow)
 			{
 				Weapon_Longbow_Fire(ent);
-				gi.sound(ent, CHAN_VOICE, gi.soundindex("berserk.wav"), 1, ATTN_NORM, 0);
 			}
 			else
 				Weapon_Crossbow_Fire(ent);
 
-			ent->client->pers.stamina -= ent->client->pers.bowfire_frame*2;
+			ent->client->pers.stamina -= ent->client->pers.bowfire_frame*4;
+
 			ent->client->pers.dontStopFire = false;
+		}
+		if(ent->client->pers.stamina <= 0)
+		{
+			ent->client->weaponstate = WEAPON_ACTIVATING;
+			ent->client->ps.gunframe = 3;
+			return;
 		}
 
 		ent->client->ps.gunframe++;

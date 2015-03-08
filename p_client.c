@@ -1220,7 +1220,7 @@ void PutClientInServer (edict_t *ent)
 	/**sets stamina variables*/
 	client->pers.stamina = 100;
 	client->pers.max_stamina = 100;
-	client->pers.stamina_regen = 4;
+	client->pers.stamina_regen = 3;
 
 	// set the delta angle
 	for (i=0 ; i<3 ; i++)
@@ -1753,7 +1753,18 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			UpdateChaseCam(other);
 	}
 
-	/*For bow and crossbow use. */
+	/*
+	============
+	MIDTERM MOD: BOW, STAMINA, RUN, BLOCK, PARRY
+	============
+	*/
+
+	/*LONGBOW AND CROSSBOW USE
+	 *If the mouse1 button is not being clicked, 
+	 *the boolean is set to true, 
+	 *and the gunframes are between 3 and 15,
+	 *set the point at which the bow fires an arrow at this point in clientthink frame.
+	*/
 	if(!((client->latched_buttons|client->buttons) & BUTTON_ATTACK) 
 		&& client->pers.dontStopFire 
 		&& client->ps.gunframe >= 3 
@@ -1762,32 +1773,95 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		client->pers.bowfire_frame = client->ps.gunframe;
 	}
 
+	/*STAMINA COSTS IF STAMINA IS LESS THAN OR EQUAL TO 0
+	 *Make sure blocking cannot be used.
+	 *Set player velocity to 150 in any direction.
+	 */
+	if(ent->client->pers.stamina <= 0)
+	{
+		TO_REMOVE(ent->flags, FL_BLOCKING);
+
+		if (ent->velocity[0] < -150)
+			ent->velocity[0] = -150;
+		else if (ent->velocity[0] > 150)
+			ent->velocity[0] = 150;
+		if (ent->velocity[1] < -150)
+			ent->velocity[1] = -150;
+		else if (ent->velocity[1] > 150)
+			ent->velocity[1] = 150;
+	}
+
+	/*STAMINA COSTS FOR RUNNING
+	 *Stamina is depleted at a rate of 0.5 per clientthink frame.
+	 *Stamina regen is set to 0 so it won't regen while running.
+	 *If stamina drops below 0, set stamina to -20 to allow a buffer for when you can run again.
+	 *If not running, set Stamina regen back to 3.
+	 */
 	//print velocities for testing purposes
-	//gi.centerprintf(ent, "V1: %i, V2: %i",(int)ent->velocity[0],(int)ent->velocity[1]);
+	gi.centerprintf(ent, "V1: %i, V2: %i, V3: %i",(int)ent->velocity[0],(int)ent->velocity[1],(int)ent->velocity[2]);
 	if(ent->velocity[0] > 240 || ent->velocity[1] > 240
 		|| ent->velocity[0] < -240 || ent->velocity[1] < -240)
 	{
 		if(ent->client->pers.stamina > 0)
 		{
-			ent->client->pers.stamina -= 1;
+			ent->client->pers.stamina -= 0.5;
 			ent->client->pers.stamina_regen = 0;
 		}
 		if(ent->client->pers.stamina <= 0)
 		{
-			ent->client->pers.stamina = -30;
+			ent->client->pers.stamina = -20;
 		}
 	}
+	else
+		ent->client->pers.stamina_regen = 3;
+
+	/*BLOCKING
+	 *Checks for flag FL_BLOCKING, if it's set do the following:
+	 *Make player invincible.
+	 *Set stamina_regen to 0.5 per clientthink frame.
+	 *Player velocity can't go higher than 100 in any direction while blocking.
+	 *If stamina hits 0 or less while blocking, set stamina to -20 for buffer
+	 *and set the flag FL_STUNNED(more on that below).
+	 */
 	if(IS_SET(ent->flags, FL_BLOCKING))
 	{
-		ent->client->pers.stamina_regen = 0.5;
 		ent->client->invincible_framenum = level.framenum + 300;
-		return;
-
+		ent->client->pers.stamina_regen = 0.5;
+		if (ent->velocity[0] < -100)
+			ent->velocity[0] = -100;
+		else if (ent->velocity[0] > 100)
+			ent->velocity[0] = 100;
+		if (ent->velocity[1] < -100)
+			ent->velocity[1] = -100;
+		else if (ent->velocity[1] > 100)
+			ent->velocity[1] = 100;
+		if(ent->velocity[2] != 0)
+		{
+			TO_REMOVE(ent->flags, FL_BLOCKING);
+		}
+		if(ent->client->pers.stamina <= 0)
+		{
+			ent->client->pers.stamina = -20;
+			TO_SET(ent->flags, FL_STUNNED);
+		}
 	}
+
+	/*BEING STUNNED
+	 *If the flag FL_STUNNED is set, do the following:
+	 *Remove blocking flag, FL_BLOCKING, so you cannot block while stunned.
+	 *Set Stamina regen to 3.
+	 *Make sure invincibility is gone.
+	 *
+	 *If stamina is less than 50, 
+	 *Stamina regen is 10, 
+	 *and player can barely move. Allows a buffer for being stunned
+	 *
+	 *Remove FL_STUNNED if higher than 50 stamina.
+	 */
 	if(IS_SET(ent->flags, FL_STUNNED))
 	{
 		TO_REMOVE(ent->flags, FL_BLOCKING);
-		ent->client->pers.stamina_regen = 4;
+		ent->client->pers.stamina_regen = 3;
 		ent->client->invincible_framenum = level.framenum - 300;
 		if(ent->client->pers.stamina < 50)
 		{
@@ -1799,11 +1873,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		{
 			TO_REMOVE(ent->flags, FL_STUNNED);
 		}
-	}
-	if(ent->client->pers.stamina <= 0)
-	{
-		TO_SET(ent->flags, FL_STUNNED);
-		TO_REMOVE(ent->flags, FL_BLOCKING);
 	}
 }
 

@@ -883,6 +883,16 @@ void Cmd_PlayerList_f(edict_t *ent)
 	}
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
+
+/*MIDTERM MOD: BLOCKING/PARRYING/DODGING COMMANDS*/
+
+/*BLOCKING AND UNBLOCKING
+ *Cmd_Block_f sets the flag FL_BLOCKING(see ClientThink in p_client.c)
+ *and center prints to let you know blocking is active.
+ *Cmd_Unblock_f unsets the flag FL_BLOCKING,
+ *makes sure player is no longer invincible,
+ *and center prints to let you know blocking is inactive.
+ */
 void Cmd_Block_f(edict_t *ent)
 {
 	TO_SET(ent->flags, FL_BLOCKING);
@@ -894,14 +904,17 @@ void Cmd_Unblock_f(edict_t *ent)
 	TO_REMOVE(ent->flags, FL_BLOCKING);
 	gi.centerprintf(ent, "Blocking is inactive.");
 }
+
 void Cmd_DodgeRight_f(edict_t *ent)
 {
-	if(ent->velocity[0] < 0)
-		ent->velocity[1] +=( ent->velocity[1] + 500);
-	else if(ent->velocity[0] == 0)
+	if(ent->velocity[1] < 0)
+		ent->velocity[1] -=( ent->velocity[1] + 500);
+	else if(ent->velocity[1] > 0)
 		ent->velocity[1] += 500;
+	else if(ent->velocity[0] < 0)
+		ent->velocity[0] -=( ent->velocity[0] + 500);
 	else
-		ent->velocity[1] += 500;
+		ent->velocity[0] += 500;
 }
 
 /*
@@ -992,10 +1005,18 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
+
+	/*MIDTERM MOD: BLOCKING/UNBLOCKING/PARRYING/DODGING*/
+
+	//The following commands are used for blocking - "block" & "unblock"
 	else if (Q_stricmp(cmd, "block") == 0)
-		Cmd_Block_f(ent);
-	else if(Q_stricmp(cmd, "unblock") == 0)
-		Cmd_Unblock_f(ent);
+	{
+		if(!IS_SET(ent->flags, FL_BLOCKING)) //if blocking isn't already set
+			Cmd_Block_f(ent);
+		else //if blocking is set.
+			Cmd_Unblock_f(ent);
+	}
+	//Command for dodging
 	else if(Q_stricmp(cmd, "dodge") == 0)
 		Cmd_DodgeRight_f(ent);
 	else	// anything that doesn't match a command will be a chat
