@@ -489,7 +489,8 @@ extern	int	body_armor_index;
 #define MOD_TRIGGER_HURT	31
 #define MOD_HIT				32
 #define MOD_TARGET_BLASTER	33
-#define MOD_LONGBOW			34	//Means of death for longbow
+#define MOD_BOW				34	//Means of death for bow
+#define MOD_SWORD			35 // Means of death for sword
 #define MOD_FRIENDLY_FIRE	0x8000000
 
 extern	int	meansOfDeath;

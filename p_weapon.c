@@ -222,7 +222,7 @@ void NoAmmoWeaponChange (edict_t *ent)
 	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("cells"))]
 		&&  ent->client->pers.inventory[ITEM_INDEX(FindItem("hyperblaster"))] )
 	{
-		ent->client->newweapon = FindItem ("hyperblaster");
+		ent->client->newweapon = FindItem ("crossbow");
 		return;
 	}
 	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("bullets"))]
@@ -234,7 +234,7 @@ void NoAmmoWeaponChange (edict_t *ent)
 	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("bullets"))]
 		&&  ent->client->pers.inventory[ITEM_INDEX(FindItem("machinegun"))] )
 	{
-		ent->client->newweapon = FindItem ("machinegun");
+		ent->client->newweapon = FindItem ("longbow");
 		return;
 	}
 	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("shells"))] > 1
@@ -828,6 +828,7 @@ void Sword_Fire (edict_t *ent, vec3_t g_offset, int damage)
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 	VectorScale (forward, -2, ent->client->kick_origin);
+	VectorScale (right, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
 	fire_sword (ent, start, forward, damage, 100 );

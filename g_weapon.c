@@ -303,6 +303,19 @@ void fire_sword(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 			{
 				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, 0);
 			}
+			else
+			{
+				VectorMA(start, 30, aimdir, end);
+				tr = gi.trace (self->s.origin, NULL, NULL, end, self, MASK_SHOT);
+				if (tr.fraction < 1.0)
+				{
+					if (tr.ent->takedamage)
+					{
+						T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, MOD_SWORD);
+					}
+					gi.sound (self, CHAN_AUTO, gi.soundindex("berserk/sword.wav") , 1, ATTN_NORM, 0);
+				}
+			}
 			gi.sound (self, CHAN_AUTO, gi.soundindex("berserk/sword.wav") , 1, ATTN_NORM, 0);
 		}
 	}
@@ -343,7 +356,7 @@ void bow_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 
 	if (other->takedamage)
 	{
-		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, self->dmg, 1, DAMAGE_ENERGY, MOD_LONGBOW);
+		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, self->dmg, 1, DAMAGE_ENERGY, MOD_BOW);
 	}
 	else
 	{

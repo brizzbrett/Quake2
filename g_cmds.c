@@ -907,6 +907,33 @@ void Cmd_Unblock_f(edict_t *ent)
 
 void Cmd_DodgeRight_f(edict_t *ent)
 {
+	float		angle;
+	vec3_t		angles;
+	vec3_t		forward,right,up;
+	static float		sr, sp, sy, cr, cp, cy;
+	// static to help MS compiler fp bugs
+
+	angle = angles[YAW] * (M_PI*2 / 360);
+	sy = sin(angle);
+	cy = cos(angle);
+	angle = angles[PITCH] * (M_PI*2 / 360);
+	sp = sin(angle);
+	cp = cos(angle);
+	angle = angles[ROLL] * (M_PI*2 / 360);
+	sr = sin(angle);
+	cr = cos(angle);
+
+	forward[0] = cp*cy;
+	forward[1] = cp*sy;
+	forward[2] = -sp;
+	right[0] = (-1*sr*sp*cy+-1*cr*-sy);
+	right[1] = (-1*sr*sp*sy+-1*cr*cy);
+	right[2] = -1*sr*cp;
+	up[0] = (cr*sp*cy+-sr*-sy);
+	up[1] = (cr*sp*sy+-sr*cy);
+	up[2] = cr*cp;
+	gi.centerprintf(ent, "sy: %0.f, cy: %0.f, sp: %0.f, cp: %0.f, sr: %0.f, cr: %0.f", sy,cy,sp,cp,sr,cr);
+	/*
 	if(ent->velocity[1] < 0)
 		ent->velocity[1] -=( ent->velocity[1] + 500);
 	else if(ent->velocity[1] > 0)
@@ -915,6 +942,7 @@ void Cmd_DodgeRight_f(edict_t *ent)
 		ent->velocity[0] -=( ent->velocity[0] + 500);
 	else
 		ent->velocity[0] += 500;
+	*/
 }
 
 /*

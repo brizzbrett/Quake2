@@ -300,8 +300,12 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				message = "was blasted by";
 				break;
 			//Means of Death message for death by longbow
-			case MOD_LONGBOW:
-				message = "was an adventurer like you, but then took an arrow to the knee by";
+			case MOD_BOW:
+				message = "took an arrow to the knee by";
+				break;
+			case MOD_SWORD:
+				message = "couldn't handle";
+				message2 = "'s massive sword";
 				break;
 			case MOD_SHOTGUN:
 				message = "was gunned down by";
@@ -1798,7 +1802,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	 *If not running, set Stamina regen back to 3.
 	 */
 	//print velocities for testing purposes
-	gi.centerprintf(ent, "V1: %i, V2: %i, V3: %i",(int)ent->velocity[0],(int)ent->velocity[1],(int)ent->velocity[2]);
+	//gi.centerprintf(ent, "V1: %i, V2: %i, V3: %i",(int)ent->velocity[0],(int)ent->velocity[1],(int)ent->velocity[2]);
 	if(ent->velocity[0] > 240 || ent->velocity[1] > 240
 		|| ent->velocity[0] < -240 || ent->velocity[1] < -240)
 	{
@@ -1820,6 +1824,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	 *Make player invincible.
 	 *Set stamina_regen to 0.5 per clientthink frame.
 	 *Player velocity can't go higher than 100 in any direction while blocking.
+	 *If jumping or falling, turn off FL_BLOCKING and invincibility.
 	 *If stamina hits 0 or less while blocking, set stamina to -20 for buffer
 	 *and set the flag FL_STUNNED(more on that below).
 	 */
@@ -1835,9 +1840,10 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			ent->velocity[1] = -100;
 		else if (ent->velocity[1] > 100)
 			ent->velocity[1] = 100;
-		if(ent->velocity[2] != 0)
+		if(ent->velocity[2] > 100 || ent->velocity[2] < -100)
 		{
 			TO_REMOVE(ent->flags, FL_BLOCKING);
+			ent->client->invincible_framenum = level.framenum - 300;
 		}
 		if(ent->client->pers.stamina <= 0)
 		{
@@ -1875,7 +1881,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		}
 	}
 }
-
 
 /*
 ==============
