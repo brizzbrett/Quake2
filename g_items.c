@@ -18,7 +18,12 @@ void Weapon_Railgun (edict_t *ent);
 void Weapon_BFG (edict_t *ent);
 void Weapon_Longbow(edict_t *ent); //longbow
 void Weapon_Crossbow(edict_t *ent); //crossbow
-void Weapon_Sword (edict_t *ent); //sword
+void Weapon_Longsword (edict_t *ent); //longsword
+void Weapon_Hammer (edict_t *ent); //hammer
+void Weapon_Dagger (edict_t *ent); //dagger
+//void Weapon_ (edict_t *ent); //tbd
+//void Weapon_ (edict_t *ent); //tbd
+//void Weapon_ (edict_t *ent); //tbd
 void Weapon_Parry(edict_t *ent); //parry
 
 gitem_armor_t jacketarmor_info	= { 25,  50, .30, .00, ARMOR_JACKET};
@@ -1278,7 +1283,7 @@ always owned, never in the world
 		NULL,
 		Use_Weapon,
 		NULL,
-		Weapon_Blaster,
+		Weapon_Hammer,
 		"misc/w_pkup.wav",
 		NULL, 0,
 		"models/weapons/v_blast/tris.md2",
@@ -1288,7 +1293,7 @@ always owned, never in the world
 		0,
 		NULL,
 		IT_WEAPON|IT_STAY_COOP,
-		WEAP_BLASTER,
+		WEAP_GRENADES,
 		NULL,
 		0,
 /* precache */ "weapons/blastf1a.wav misc/lasfly.wav"
@@ -1529,7 +1534,7 @@ always owned, never in the world
 		NULL,
 		Use_Weapon,                             
 		NULL,
-		Weapon_Sword,                           
+		Weapon_Longsword,                           
 		"misc/w_pkup.wav",
 		NULL, 0,
 		"models/weapons/v_handgr/tris.md2",      
