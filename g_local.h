@@ -489,8 +489,13 @@ extern	int	body_armor_index;
 #define MOD_TRIGGER_HURT	31
 #define MOD_HIT				32
 #define MOD_TARGET_BLASTER	33
-#define MOD_BOW				34	//Means of death for bow
-#define MOD_SWORD			35 // Means of death for sword
+#define MOD_BOW				34	// Means of death for Longbow/Crossbow
+#define MOD_SUNLIGHTSWORD	35  // Means of death for Sunlight Straight Sword
+#define MOD_BSGREATHAMMER	36	// Means of death for Blacksmith Great Hammer
+#define MOD_ESTOC			37  // Means of death for Estoc
+#define MOD_SPEAR			38	// Means of death for Spear
+#define MOD_UCHIGATANA		39  // Means of death for Uchigatana
+#define MOD_GREATSCYTHE		40	// Means of death for Great Scythe
 #define MOD_FRIENDLY_FIRE	0x8000000
 
 extern	int	meansOfDeath;
@@ -727,13 +732,14 @@ void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int 
 void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage);
 void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
 void fire_bfg (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius);
+
 void fire_bow (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed);
-void fire_longsword( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
-void fire_hammer( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
-void fire_dagger( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
-//void fire_sword( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
-//void fire_sword( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
-//void fire_sword( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
+void fire_sunsword( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
+void fire_bs_greathammer( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
+void fire_estoc( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
+void fire_spear( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
+void fire_uchigatana( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
+void fire_greatscythe( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
 void fire_parry(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
 
 //
@@ -875,6 +881,7 @@ typedef struct
 	qboolean	dontStopFire;	// used to stop bow from continually shooting arrows
 	qboolean	crossbow;
 	qboolean	notAttacking;
+	qboolean	swing;
 
 } client_persistant_t;
 

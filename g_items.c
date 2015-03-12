@@ -16,14 +16,15 @@ void Weapon_Grenade (edict_t *ent);
 void Weapon_GrenadeLauncher (edict_t *ent);
 void Weapon_Railgun (edict_t *ent);
 void Weapon_BFG (edict_t *ent);
+
 void Weapon_Longbow(edict_t *ent); //longbow
 void Weapon_Crossbow(edict_t *ent); //crossbow
-void Weapon_Longsword (edict_t *ent); //longsword
-void Weapon_Hammer (edict_t *ent); //hammer
-void Weapon_Dagger (edict_t *ent); //dagger
-//void Weapon_ (edict_t *ent); //tbd
-//void Weapon_ (edict_t *ent); //tbd
-//void Weapon_ (edict_t *ent); //tbd
+void Weapon_Sunsword (edict_t *ent); //longsword
+void Weapon_BSGreatHammer (edict_t *ent); //hammer
+void Weapon_Estoc (edict_t *ent); //rapier
+void Weapon_Spear (edict_t *ent); //spear
+void Weapon_Uchi (edict_t *ent); //katana
+void Weapon_GreatScythe (edict_t *ent); //scythe
 void Weapon_Parry(edict_t *ent); //parry
 
 gitem_armor_t jacketarmor_info	= { 25,  50, .30, .00, ARMOR_JACKET};
@@ -1283,12 +1284,12 @@ always owned, never in the world
 		NULL,
 		Use_Weapon,
 		NULL,
-		Weapon_Hammer,
+		Weapon_BSGreatHammer,
 		"misc/w_pkup.wav",
 		NULL, 0,
-		"models/weapons/v_blast/tris.md2",
+		"models/weapons/v_hammer/tris.md2",
 /* icon */		"w_blaster",
-/* pickup */	"Blaster",
+/* pickup */	"Hammer",
 		0,
 		0,
 		NULL,
@@ -1472,7 +1473,7 @@ always owned, never in the world
 		"models/weapons/g_hyperb/tris.md2", EF_ROTATE,
 		"models/weapons/v_hyperb/tris.md2",
 /* icon */		"w_hyperblaster",
-/* pickup */	"Hyper Blaster",
+/* pickup */	"Parrying Dagger",
 		0,
 		1,
 		"Cells",
@@ -1530,16 +1531,16 @@ always owned, never in the world
 	},
 
 	{
-		"weapon_sword", 
+		"weapon_longsword", 
 		NULL,
 		Use_Weapon,                             
 		NULL,
-		Weapon_Longsword,                           
+		Weapon_Sunsword,                           
 		"misc/w_pkup.wav",
 		NULL, 0,
 		"models/weapons/v_handgr/tris.md2",      
 /* icon */		"w_blaster",
-/* pickup */	"Sword",
+/* pickup */	"Sunlight Straight Sword",
 		0,
 		0,
 		NULL,

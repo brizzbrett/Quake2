@@ -399,8 +399,8 @@ void Cmd_Use_f (edict_t *ent)
 	}
 	else if (!Q_stricmp(s, ent->client->pers.weapon->pickup_name)) 
     {    
-        if (!Q_stricmp(s, "Blaster"))
-            it = FindItem ("Sword");
+        if (!Q_stricmp(s, "Hammer"))
+            it = FindItem ("Longsword");
     }
 
 	it->use (ent, it);

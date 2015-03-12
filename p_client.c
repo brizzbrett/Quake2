@@ -303,9 +303,23 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			case MOD_BOW:
 				message = "took an arrow to the knee by";
 				break;
-			case MOD_SWORD:
-				message = "couldn't handle";
-				message2 = "'s massive sword";
+			case MOD_SUNLIGHTSWORD:
+				message = "couldn't praise the sun hard enough like";
+				break;
+			case MOD_BSGREATHAMMER:
+				message = "died to the might of the Giant Blacksmith, ";
+				break;
+			case MOD_ESTOC:
+				message = "was poked to death by";
+				break;
+			case MOD_SPEAR:
+				message = "was poked by";
+				break;
+			case MOD_UCHIGATANA:
+				message = "died to a filthy casul by";
+				break;
+			case MOD_GREATSCYTHE:
+				message = "is a filthy casul who died to";
 				break;
 			case MOD_SHOTGUN:
 				message = "was gunned down by";
@@ -409,7 +423,7 @@ void TossClientWeapon (edict_t *self)
 	item = self->client->pers.weapon;
 	if (! self->client->pers.inventory[self->client->ammo_index] )
 		item = NULL;
-	if (item && (strcmp (item->pickup_name, "Blaster") == 0))
+	if (item && (strcmp (item->pickup_name, "Hammer") == 0))
 		item = NULL;
 
 	if (!((int)(dmflags->value) & DF_QUAD_DROP))
@@ -603,10 +617,10 @@ void InitClientPersistant (gclient_t *client)
 
 	memset (&client->pers, 0, sizeof(client->pers));
 
-	item = FindItem("Sword");
+	item = FindItem("Longsword");
 	client->pers.inventory[ITEM_INDEX(item)] = 1;
 
-	item = FindItem("Blaster");
+	item = FindItem("Hammer");
 	client->pers.selected_item = ITEM_INDEX(item);
 	client->pers.inventory[client->pers.selected_item] = 1;
 
@@ -629,6 +643,7 @@ void InitClientPersistant (gclient_t *client)
 
 	client->pers.stamina = client->pers.max_stamina;
 	client->pers.notAttacking = true;
+	client->pers.swing = true;
 }
 
 
@@ -1881,6 +1896,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			TO_REMOVE(ent->flags, FL_STUNNED);
 		}
 	}
+
 }
 
 /*
