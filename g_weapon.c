@@ -287,6 +287,87 @@ void fire_sword(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 {
 
 	trace_t		tr;         
+	vec3_t		right, forward, up;
+	vec3_t		dir;
+	vec3_t		end;
+	int			i;
+
+	vectoangles (aimdir, dir);
+	AngleVectors (dir, forward, right, up);
+
+	tr = gi.trace (self->s.origin, NULL, NULL, start, self, MASK_SHOT);
+	
+	if (tr.fraction == 1.0)
+	{
+		VectorAdd(aimdir,right,aimdir);
+		VectorSubtract(aimdir,up,aimdir);
+		VectorMA(start, 30, aimdir, end);
+		tr = gi.trace (self->s.origin, NULL, NULL, end, self, MASK_SHOT);
+		gi.WriteByte (svc_temp_entity);
+		gi.WriteByte (TE_SPARKS);
+		gi.WritePosition (tr.endpos);
+		gi.WriteDir (tr.plane.normal);
+		gi.multicast (tr.endpos, MULTICAST_PVS);
+		if (tr.fraction < 1.0)
+		{
+			if (tr.ent->takedamage)
+			{
+				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, 0);
+			}
+			gi.sound (self, CHAN_AUTO, gi.soundindex("berserk/sword.wav") , 1, ATTN_NORM, 0);
+		}
+		else
+		{
+			for(i = 0; i < 2; i++)
+			{
+				VectorSubtract(aimdir,right,aimdir);
+				VectorAdd(aimdir,up,aimdir);
+				VectorMA(start, 30, aimdir, end);
+				tr = gi.trace (self->s.origin, NULL, NULL, end, self, MASK_SHOT);
+				gi.WriteByte (svc_temp_entity);
+				gi.WriteByte (TE_SPARKS);
+				gi.WritePosition (tr.endpos);
+				gi.WriteDir (tr.plane.normal);
+				gi.multicast (tr.endpos, MULTICAST_PVS);
+				if (tr.fraction < 1.0)
+				{
+					if (tr.ent->takedamage)
+					{
+						T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, 0);
+					}
+					gi.sound (self, CHAN_AUTO, gi.soundindex("berserk/sword.wav") , 1, ATTN_NORM, 0);
+					break;
+				}
+			}
+		}
+	}
+	if(tr.fraction < 1.0)
+	{
+		gi.WriteByte (svc_temp_entity);
+		gi.WriteByte (TE_BLOOD);
+		gi.WritePosition (tr.endpos);
+		gi.WriteDir (tr.plane.normal);
+		gi.multicast (tr.endpos, MULTICAST_PVS);
+
+		if (self->client)
+			PlayerNoise(self, tr.endpos, PNOISE_IMPACT);
+	}
+		
+	return;
+}
+
+/*
+=============
+fire_sword
+
+Attacks with a single hit from sword.
+=============
+*/
+
+void fire_parry(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick)
+{
+
+	trace_t		tr;         
 				
 	vec3_t		end;
 
@@ -294,27 +375,19 @@ void fire_sword(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 	
 	if (tr.fraction == 1.0)
 	{
-
 		VectorMA(start, 30, aimdir, end);
 		tr = gi.trace (self->s.origin, NULL, NULL, end, self, MASK_SHOT);
 		if (tr.fraction < 1.0)
 		{
 			if (tr.ent->takedamage)
 			{
-				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, 0);
-			}
-			else
-			{
-				VectorMA(start, 30, aimdir, end);
-				tr = gi.trace (self->s.origin, NULL, NULL, end, self, MASK_SHOT);
-				if (tr.fraction < 1.0)
+				if(tr.ent->client->pers.notAttacking == false)
 				{
-					if (tr.ent->takedamage)
-					{
-						T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, MOD_SWORD);
-					}
-					gi.sound (self, CHAN_AUTO, gi.soundindex("berserk/sword.wav") , 1, ATTN_NORM, 0);
+					tr.ent->client->pers.stamina = -100;
+					TO_SET(tr.ent->flags, FL_STUNNED);
 				}
+				else
+					T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, 0);
 			}
 			gi.sound (self, CHAN_AUTO, gi.soundindex("berserk/sword.wav") , 1, ATTN_NORM, 0);
 		}

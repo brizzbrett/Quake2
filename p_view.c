@@ -729,7 +729,7 @@ void G_SetClientEffects (edict_t *ent)
 	int		remaining;
 
 	ent->s.effects |= EF_COLOR_SHELL;
-	ent->s.renderfx |= RF_SHELL_BLUE;
+	ent->s.renderfx |= RF_SHELL_RED;
 
 	if (ent->health <= 0 || level.intermissiontime)
 		return;

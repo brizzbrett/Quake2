@@ -729,6 +729,7 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 void fire_bfg (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius);
 void fire_bow (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed);
 void fire_sword ( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
+void fire_parry(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
 
 //
 // g_ptrail.c
@@ -782,6 +783,7 @@ void DeathmatchScoreboardMessage (edict_t *client, edict_t *killer);
 // g_pweapon.c
 //
 void PlayerNoise(edict_t *who, vec3_t where, int type);
+void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
 
 //
 // m_move.c
@@ -867,6 +869,7 @@ typedef struct
 	int			bowfire_frame;		// used to calculate gunframe at point mouse is unclicked.
 	qboolean	dontStopFire;	// used to stop bow from continually shooting arrows
 	qboolean	crossbow;
+	qboolean	notAttacking;
 
 } client_persistant_t;
 

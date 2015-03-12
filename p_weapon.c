@@ -10,7 +10,7 @@ static byte		is_silenced;
 void weapon_grenade_fire (edict_t *ent, qboolean held);
 
 
-static void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
+void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 {
 	vec3_t	_distance;
 
@@ -363,6 +363,7 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 	int		n;
 	int		i = 0;
 
+	ent->client->pers.notAttacking = true;
 	if(ent->deadflag || ent->s.modelindex != 255) // VWep animations screw up corpses
 	{
 		return;
@@ -493,6 +494,7 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 
 	if (ent->client->weaponstate == WEAPON_FIRING)
 	{
+		ent->client->pers.notAttacking = false;
 		for (n = 0; fire_frames[n]; n++)
 		{	
 			/*
@@ -817,6 +819,7 @@ SWORD
 void Sword_Fire (edict_t *ent, vec3_t g_offset, int damage)
 {
 	vec3_t  forward, right;
+	vec3_t	diagonal;
 	vec3_t  start;
 	vec3_t  offset;
 
@@ -828,7 +831,6 @@ void Sword_Fire (edict_t *ent, vec3_t g_offset, int damage)
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 	VectorScale (forward, -2, ent->client->kick_origin);
-	VectorScale (right, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
 	fire_sword (ent, start, forward, damage, 100 );
@@ -851,6 +853,52 @@ void Weapon_Sword (edict_t *ent)
 	static int      fire_frames[]   = {12, 0};
 
 	Weapon_Generic (ent, 11, 15, 48, 49, pause_frames, fire_frames, Weapon_Sword_Fire, 20);
+}
+
+/*
+======================================================================
+
+PARRY
+
+======================================================================
+*/
+void Parry_Fire (edict_t *ent, vec3_t g_offset, int damage)
+{
+	vec3_t  forward, right;
+	vec3_t  start;
+	vec3_t  offset;
+
+	if (is_quad)
+		damage *= 4;
+	AngleVectors (ent->client->v_angle, forward, right, NULL);
+	VectorSet(offset, 24, 8, ent->viewheight-8);
+	VectorAdd (offset, g_offset, offset);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+
+	VectorScale (forward, -3, ent->client->kick_origin);
+
+	ent->client->kick_angles[0] = -1;
+
+	fire_parry(ent, start, forward, damage, 100 );
+	gi.sound(ent, CHAN_AUTO, gi.soundindex("berserk/swordswing.wav"), 1, ATTN_NORM, 0);
+}
+
+void Weapon_Parry_Fire (edict_t *ent)
+{
+	int damage;
+	if (deathmatch->value)
+		damage = 10;
+	else
+		damage = 5;
+	Parry_Fire (ent, vec3_origin, damage);
+	ent->client->ps.gunframe++;
+}
+void Weapon_Parry (edict_t *ent)
+{
+	static int      pause_frames[]  = {19, 32, 0};
+	static int      fire_frames[]   = {12, 0};
+
+	Weapon_Generic (ent, 11, 15, 48, 49, pause_frames, fire_frames, Weapon_Parry_Fire, 20);
 }
 
 /*
@@ -1067,7 +1115,7 @@ void Weapon_Blaster_Fire (edict_t *ent)
 	int		damage;
 
 	if (deathmatch->value)
-		damage = 15;
+		damage = 1;
 	else
 		damage = 10;
 	Blaster_Fire (ent, vec3_origin, damage, false, EF_BLASTER);
@@ -1077,7 +1125,7 @@ void Weapon_Blaster_Fire (edict_t *ent)
 void Weapon_Blaster (edict_t *ent, edict_t *client)
 {
 	static int	pause_frames[]	= {19, 32, 0};
-	static int	fire_frames[]	= {5, 0};
+	static int	fire_frames[]	= {7, 0};
 	Weapon_Generic (ent, 4, 8, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire,25);
 }
 

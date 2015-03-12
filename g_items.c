@@ -19,6 +19,7 @@ void Weapon_BFG (edict_t *ent);
 void Weapon_Longbow(edict_t *ent); //longbow
 void Weapon_Crossbow(edict_t *ent); //crossbow
 void Weapon_Sword (edict_t *ent); //sword
+void Weapon_Parry(edict_t *ent); //parry
 
 gitem_armor_t jacketarmor_info	= { 25,  50, .30, .00, ARMOR_JACKET};
 gitem_armor_t combatarmor_info	= { 50, 100, .60, .30, ARMOR_COMBAT};
@@ -1349,7 +1350,7 @@ always owned, never in the world
 		Weapon_Longbow,
 		"misc/w_pkup.wav",
 		"models/weapons/g_machn/tris.md2", EF_ROTATE,
-		"models/weapons/v_machn/tris.md2",
+		"models/weapons/v_sword/tris.md2",
 /* icon */		"w_machinegun",
 /* pickup */	"Longbow",
 		0,
@@ -1461,7 +1462,7 @@ always owned, never in the world
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
-		Weapon_HyperBlaster,
+		Weapon_Parry,
 		"misc/w_pkup.wav",
 		"models/weapons/g_hyperb/tris.md2", EF_ROTATE,
 		"models/weapons/v_hyperb/tris.md2",

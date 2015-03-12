@@ -628,6 +628,7 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.stamina_regen = stamina_regen;
 
 	client->pers.stamina = client->pers.max_stamina;
+	client->pers.notAttacking = true;
 }
 
 
@@ -1847,7 +1848,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		}
 		if(ent->client->pers.stamina <= 0)
 		{
-			ent->client->pers.stamina = -20;
+			ent->client->pers.stamina = -15;
 			TO_SET(ent->flags, FL_STUNNED);
 		}
 	}
