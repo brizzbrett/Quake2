@@ -617,10 +617,22 @@ void InitClientPersistant (gclient_t *client)
 
 	memset (&client->pers, 0, sizeof(client->pers));
 
-	item = FindItem("Longsword");
+	item = FindItem("Hammer");
 	client->pers.inventory[ITEM_INDEX(item)] = 1;
 
-	item = FindItem("Hammer");
+	item = FindItem("Estoc");
+	client->pers.inventory[ITEM_INDEX(item)] = 2;
+
+	item = FindItem("Spear");
+	client->pers.inventory[ITEM_INDEX(item)] = 3;
+
+	item = FindItem("Uchigatana");
+	client->pers.inventory[ITEM_INDEX(item)] = 4;
+
+	item = FindItem("Scythe");
+	client->pers.inventory[ITEM_INDEX(item)] = 5;
+
+	item = FindItem("Blaster");
 	client->pers.selected_item = ITEM_INDEX(item);
 	client->pers.inventory[client->pers.selected_item] = 1;
 

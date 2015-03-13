@@ -249,7 +249,7 @@ void NoAmmoWeaponChange (edict_t *ent)
 		ent->client->newweapon = FindItem ("shotgun");
 		return;
 	}
-	ent->client->newweapon = FindItem ("hammer");
+	ent->client->newweapon = FindItem ("Blaster");
 }
 
 /*
@@ -1057,7 +1057,7 @@ void GreatScythe_Fire (edict_t *ent, vec3_t g_offset, int damage)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_estoc (ent, start, forward, damage, 100 );
+	fire_greatscythe (ent, start, forward, damage, 100 );
 	gi.sound(ent, CHAN_AUTO, gi.soundindex("berserk/swordswing.wav"), 1, ATTN_NORM, 0);
 }
 

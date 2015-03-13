@@ -448,8 +448,7 @@ void fire_bs_greathammer(edict_t *self, vec3_t start, vec3_t aimdir, int damage,
 		{
 			if (tr.ent->takedamage)
 			{
-				tr.ent->velocity[2] += 100;
-				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, 0);
+				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick*2, 0, 0);
 			}
 			gi.sound (self, CHAN_AUTO, gi.soundindex("berserk/sword.wav") , 1, ATTN_NORM, 0);
 		}
@@ -528,7 +527,6 @@ void fire_estoc(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 		{
 			if (tr.ent->takedamage)
 			{
-				tr.ent->velocity[2] += 100;
 				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, 0);
 			}
 			gi.sound (self, CHAN_AUTO, gi.soundindex("berserk/sword.wav") , 1, ATTN_NORM, 0);
@@ -573,7 +571,7 @@ void fire_spear(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 	
 	if (!((tr.surface) && (tr.surface->flags & SURF_SKY)))
 	{
-		VectorMA(start, 10, aimdir, end);
+		VectorMA(start, 35, aimdir, end);
 		tr = gi.trace (self->s.origin, NULL, NULL, end, self, MASK_SHOT);
 		gi.WriteByte (svc_temp_entity);
 		gi.WriteByte (TE_SPARKS);
@@ -584,7 +582,6 @@ void fire_spear(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 		{
 			if (tr.ent->takedamage)
 			{
-				tr.ent->velocity[2] += 100;
 				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, 0);
 			}
 			gi.sound (self, CHAN_AUTO, gi.soundindex("berserk/sword.wav") , 1, ATTN_NORM, 0);
@@ -608,7 +605,7 @@ void fire_spear(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 =============
 fire_uchigatana
 
-Attacks with a single hit straight, fast.
+Attacks with a diagonal swing upwards, fast.
 =============
 */
 
@@ -628,7 +625,9 @@ void fire_uchigatana(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int
 	
 	if (!((tr.surface) && (tr.surface->flags & SURF_SKY)))
 	{
-		VectorMA(start, 10, aimdir, end);
+		VectorAdd(aimdir,right,aimdir);
+		VectorSubtract(aimdir,up,aimdir);
+		VectorMA(start, 35, aimdir, end);
 		tr = gi.trace (self->s.origin, NULL, NULL, end, self, MASK_SHOT);
 		gi.WriteByte (svc_temp_entity);
 		gi.WriteByte (TE_SPARKS);
@@ -639,10 +638,33 @@ void fire_uchigatana(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int
 		{
 			if (tr.ent->takedamage)
 			{
-				tr.ent->velocity[2] += 100;
 				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, 0);
 			}
 			gi.sound (self, CHAN_AUTO, gi.soundindex("berserk/sword.wav") , 1, ATTN_NORM, 0);
+		}
+		else
+		{
+			for(i = 0; i < 2; i++)
+			{
+				VectorAdd(aimdir,up,aimdir);
+				VectorSubtract(aimdir,right,aimdir);
+				VectorMA(start, 30, aimdir, end);
+				tr = gi.trace (self->s.origin, NULL, NULL, end, self, MASK_SHOT);
+				gi.WriteByte (svc_temp_entity);
+				gi.WriteByte (TE_SPARKS);
+				gi.WritePosition (tr.endpos);
+				gi.WriteDir (tr.plane.normal);
+				gi.multicast (tr.endpos, MULTICAST_PVS);
+				if (tr.fraction < 1.0)
+				{
+					if (tr.ent->takedamage)
+					{
+						T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, 0);
+					}
+					gi.sound (self, CHAN_AUTO, gi.soundindex("berserk/sword.wav") , 1, ATTN_NORM, 0);
+					break;
+				}
+			}
 		}
 	}
 	if(tr.fraction < 1.0)
@@ -683,7 +705,9 @@ void fire_greatscythe(edict_t *self, vec3_t start, vec3_t aimdir, int damage, in
 	
 	if (!((tr.surface) && (tr.surface->flags & SURF_SKY)))
 	{
-		VectorMA(start, 10, aimdir, end);
+		VectorAdd(aimdir,right, aimdir);
+		VectorAdd(aimdir,right, aimdir);
+		VectorMA(start, 40, aimdir, end);
 		tr = gi.trace (self->s.origin, NULL, NULL, end, self, MASK_SHOT);
 		gi.WriteByte (svc_temp_entity);
 		gi.WriteByte (TE_SPARKS);
@@ -694,10 +718,32 @@ void fire_greatscythe(edict_t *self, vec3_t start, vec3_t aimdir, int damage, in
 		{
 			if (tr.ent->takedamage)
 			{
-				tr.ent->velocity[2] += 100;
 				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, 0);
 			}
 			gi.sound (self, CHAN_AUTO, gi.soundindex("berserk/sword.wav") , 1, ATTN_NORM, 0);
+		}
+		else
+		{
+			for(i = 0; i < 4; i++)
+			{
+				VectorSubtract(aimdir,right,aimdir);
+				VectorMA(start, 40, aimdir, end);
+				tr = gi.trace (self->s.origin, NULL, NULL, end, self, MASK_SHOT);
+				gi.WriteByte (svc_temp_entity);
+				gi.WriteByte (TE_SPARKS);
+				gi.WritePosition (tr.endpos);
+				gi.WriteDir (tr.plane.normal);
+				gi.multicast (tr.endpos, MULTICAST_PVS);
+				if (tr.fraction < 1.0)
+				{
+					if (tr.ent->takedamage)
+					{
+						T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, 0);
+					}
+					gi.sound (self, CHAN_AUTO, gi.soundindex("berserk/sword.wav") , 1, ATTN_NORM, 0);
+					break;
+				}
+			}
 		}
 	}
 	if(tr.fraction < 1.0)

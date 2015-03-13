@@ -490,8 +490,8 @@ extern	int	body_armor_index;
 #define MOD_HIT				32
 #define MOD_TARGET_BLASTER	33
 #define MOD_BOW				34	// Means of death for Longbow/Crossbow
-#define MOD_SUNLIGHTSWORD	35  // Means of death for Sunlight Straight Sword
-#define MOD_BSGREATHAMMER	36	// Means of death for Blacksmith Great Hammer
+#define MOD_SUNLIGHTSWORD	35  // Means of death for Sword
+#define MOD_BSGREATHAMMER	36	// Means of death for Blaster
 #define MOD_ESTOC			37  // Means of death for Estoc
 #define MOD_SPEAR			38	// Means of death for Spear
 #define MOD_UCHIGATANA		39  // Means of death for Uchigatana
