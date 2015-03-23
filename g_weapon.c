@@ -563,7 +563,7 @@ void fire_spear(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 	vec3_t		dir;
 	vec3_t		end;
 	int			i;
-
+	
 	vectoangles (aimdir, dir);
 	AngleVectors (dir, forward, right, up);
 
@@ -790,6 +790,7 @@ void fire_parry(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 				{
 					tr.ent->client->pers.stamina = -100;
 					TO_SET(tr.ent->flags, FL_STUNNED);
+					gi.centerprintf(self, "You have parried!");
 				}
 				else
 					T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, 0);

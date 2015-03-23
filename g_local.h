@@ -882,6 +882,7 @@ typedef struct
 	qboolean	crossbow;
 	qboolean	notAttacking;
 	qboolean	swing;
+	qboolean	spear;
 
 } client_persistant_t;
 

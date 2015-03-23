@@ -500,11 +500,11 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 			/*
 			 *	If stamina is higher than 0, execute fire_frames normally
 			 *	If its not, bullets stop shooting. 
-			 *	Also, if stun flag and blocking flags are not set.
+			 *	Also, if blocking flags are not set or not a spear.
 			*/
 			if(ent->client->pers.stamina > 0)
 			{
-				if(!IS_SET(ent->flags, FL_BLOCKING))
+				if(!IS_SET(ent->flags, FL_BLOCKING) || ent->client->pers.spear == true)
 				{
 					if (ent->client->ps.gunframe == fire_frames[n])
 					{
@@ -816,87 +816,87 @@ SUNLIGHT STRAIGHT SWORD
 
 ======================================================================
 */
-void Sunsword_Fire (edict_t *ent, vec3_t g_offset, int damage)
+void Sunsword_Fire (edict_t *ent)
 {
 	vec3_t  forward, right;
 	vec3_t  start;
 	vec3_t  offset;
+	int		damage;
+
+	ent->client->pers.spear = false;
+
+	if (deathmatch->value)
+		damage = 25;
+	else
+		damage = 20;
 
 	if (is_quad)
 		damage *= 4;
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 24, 8, ent->viewheight-8);
-	VectorAdd (offset, g_offset, offset);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_sunsword (ent, start, forward, damage, 100 );
+	fire_sunsword (ent, start, forward, damage, 50 );
 	gi.sound(ent, CHAN_AUTO, gi.soundindex("berserk/swordswing.wav"), 1, ATTN_NORM, 0);
-}
 
-void Weapon_Sunsword_Fire (edict_t *ent)
-{
-	int damage;
-	if (deathmatch->value)
-		damage = 25;
-	else
-		damage = 20;
-	Sunsword_Fire (ent, vec3_origin, damage);
 	ent->client->ps.gunframe++;
 }
+
 void Weapon_Sunsword (edict_t *ent)
 {
 	static int      pause_frames[]  = {19, 32, 0};
-	static int      fire_frames[]   = {12, 0};
+	static int      fire_frames[]   = {4, 0};
 
-	Weapon_Generic (ent, 11, 15, 48, 49, pause_frames, fire_frames, Weapon_Sunsword_Fire, 20);
+	Weapon_Generic (ent, 3, 7, 48, 49, pause_frames, fire_frames, Sunsword_Fire, 20);
 }
 
 /*
 ======================================================================
 
-HAMMER
+BLACKSMITH GREAT HAMMER
 
 ======================================================================
 */
-void BSGreatHammer_Fire (edict_t *ent, vec3_t g_offset, int damage)
+void BSGreatHammer_Fire (edict_t *ent)
 {
 	vec3_t  forward, right;
 	vec3_t  start;
 	vec3_t  offset;
+	int		damage;
+
+	ent->client->pers.spear = false;
+
+	if (deathmatch->value)
+		damage = 60;
+	else
+		damage = 55;
 
 	if (is_quad)
 		damage *= 4;
+
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
+
 	VectorSet(offset, 24, 8, ent->viewheight-8);
-	VectorAdd (offset, g_offset, offset);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_bs_greathammer (ent, start, forward, damage, 100 );
+	fire_bs_greathammer (ent, start, forward, damage, 200);
 	gi.sound(ent, CHAN_AUTO, gi.soundindex("berserk/swordswing.wav"), 1, ATTN_NORM, 0);
-}
 
-void Weapon_BSGreatHammer_Fire (edict_t *ent)
-{
-	int damage;
-	if (deathmatch->value)
-		damage = 25;
-	else
-		damage = 20;
-	BSGreatHammer_Fire (ent, vec3_origin, damage);
 	ent->client->ps.gunframe++;
 }
+
 void Weapon_BSGreatHammer (edict_t *ent)
 {
 	static int      pause_frames[]  = {19, 32, 0};
-	static int      fire_frames[]   = {12, 0};
+	static int      fire_frames[]   = {13, 0};
 
-	Weapon_Generic (ent, 11, 15, 48, 49, pause_frames, fire_frames, Weapon_BSGreatHammer_Fire, 20);
+	Weapon_Generic (ent, 5, 14, 48, 49, pause_frames, fire_frames, BSGreatHammer_Fire, 45);
 }
 
 /*
@@ -906,42 +906,43 @@ ESTOC
 
 ======================================================================
 */
-void Estoc_Fire (edict_t *ent, vec3_t g_offset, int damage)
+void Estoc_Fire (edict_t *ent)
 {
 	vec3_t  forward, right;
 	vec3_t  start;
 	vec3_t  offset;
+	int		damage;
+
+	ent->client->pers.spear = false;
+
+	if (deathmatch->value)
+		damage = 25;
+	else
+		damage = 20;
 
 	if (is_quad)
 		damage *= 4;
+
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 24, 8, ent->viewheight-8);
-	VectorAdd (offset, g_offset, offset);
+
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_estoc (ent, start, forward, damage, 100 );
+	fire_estoc (ent, start, forward, damage, 30 );
 	gi.sound(ent, CHAN_AUTO, gi.soundindex("berserk/swordswing.wav"), 1, ATTN_NORM, 0);
-}
 
-void Weapon_Estoc_Fire (edict_t *ent)
-{
-	int damage;
-	if (deathmatch->value)
-		damage = 25;
-	else
-		damage = 20;
-	Estoc_Fire (ent, vec3_origin, damage);
 	ent->client->ps.gunframe++;
 }
+
 void Weapon_Estoc (edict_t *ent)
 {
 	static int      pause_frames[]  = {19, 32, 0};
-	static int      fire_frames[]   = {12, 0};
+	static int      fire_frames[]   = {4, 0};
 
-	Weapon_Generic (ent, 11, 15, 48, 49, pause_frames, fire_frames, Weapon_Estoc_Fire, 20);
+	Weapon_Generic (ent, 3, 5, 25, 26, pause_frames, fire_frames, Estoc_Fire, 23);
 }
 
 /*
@@ -951,42 +952,43 @@ SPEAR
 
 ======================================================================
 */
-void Spear_Fire (edict_t *ent, vec3_t g_offset, int damage)
+void Spear_Fire (edict_t *ent)
 {
 	vec3_t  forward, right;
 	vec3_t  start;
 	vec3_t  offset;
+	int		damage;
+
+	ent->client->pers.spear = true;
+
+	if (deathmatch->value)
+		damage = 25;
+	else
+		damage = 20;
 
 	if (is_quad)
 		damage *= 4;
+
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 24, 8, ent->viewheight-8);
-	VectorAdd (offset, g_offset, offset);
+
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_spear (ent, start, forward, damage, 100 );
+	fire_spear (ent, start, forward, damage, 100);
 	gi.sound(ent, CHAN_AUTO, gi.soundindex("berserk/swordswing.wav"), 1, ATTN_NORM, 0);
-}
 
-void Weapon_Spear_Fire (edict_t *ent)
-{
-	int damage;
-	if (deathmatch->value)
-		damage = 25;
-	else
-		damage = 20;
-	Spear_Fire (ent, vec3_origin, damage);
 	ent->client->ps.gunframe++;
 }
+
 void Weapon_Spear (edict_t *ent)
 {
 	static int      pause_frames[]  = {19, 32, 0};
-	static int      fire_frames[]   = {12, 0};
+	static int      fire_frames[]   = {4, 0};
 
-	Weapon_Generic (ent, 11, 15, 48, 49, pause_frames, fire_frames, Weapon_Spear_Fire, 20);
+	Weapon_Generic (ent, 3, 9, 25, 26, pause_frames, fire_frames, Spear_Fire, 20);
 }
 
 /*
@@ -996,42 +998,43 @@ UCHIGATANA
 
 ======================================================================
 */
-void Uchi_Fire (edict_t *ent, vec3_t g_offset, int damage)
+void Uchi_Fire (edict_t *ent)
 {
 	vec3_t  forward, right;
 	vec3_t  start;
 	vec3_t  offset;
+	int		damage;
+
+	ent->client->pers.spear = false;
+
+	if (deathmatch->value)
+		damage = 18;
+	else
+		damage = 15;
 
 	if (is_quad)
 		damage *= 4;
+
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 24, 8, ent->viewheight-8);
-	VectorAdd (offset, g_offset, offset);
+
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_uchigatana (ent, start, forward, damage, 100 );
+	fire_uchigatana (ent, start, forward, damage, 70 );
 	gi.sound(ent, CHAN_AUTO, gi.soundindex("berserk/swordswing.wav"), 1, ATTN_NORM, 0);
-}
 
-void Weapon_Uchi_Fire (edict_t *ent)
-{
-	int damage;
-	if (deathmatch->value)
-		damage = 25;
-	else
-		damage = 20;
-	Uchi_Fire (ent, vec3_origin, damage);
 	ent->client->ps.gunframe++;
 }
+
 void Weapon_Uchi (edict_t *ent)
 {
 	static int      pause_frames[]  = {19, 32, 0};
 	static int      fire_frames[]   = {12, 0};
 
-	Weapon_Generic (ent, 11, 15, 48, 49, pause_frames, fire_frames, Weapon_Uchi_Fire, 20);
+	Weapon_Generic (ent, 11, 15, 48, 49, pause_frames, fire_frames, Uchi_Fire, 20);
 }
 
 /*
@@ -1041,17 +1044,26 @@ GREAT SCYTHE
 
 ======================================================================
 */
-void GreatScythe_Fire (edict_t *ent, vec3_t g_offset, int damage)
+void GreatScythe_Fire (edict_t *ent)
 {
 	vec3_t  forward, right;
 	vec3_t  start;
 	vec3_t  offset;
+	int		damage;
+
+	ent->client->pers.spear = false;
+
+	if (deathmatch->value)
+		damage = 35;
+	else
+		damage = 30;
 
 	if (is_quad)
 		damage *= 4;
+
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 24, 8, ent->viewheight-8);
-	VectorAdd (offset, g_offset, offset);
+
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 	VectorScale (forward, -2, ent->client->kick_origin);
@@ -1059,24 +1071,16 @@ void GreatScythe_Fire (edict_t *ent, vec3_t g_offset, int damage)
 
 	fire_greatscythe (ent, start, forward, damage, 100 );
 	gi.sound(ent, CHAN_AUTO, gi.soundindex("berserk/swordswing.wav"), 1, ATTN_NORM, 0);
-}
 
-void Weapon_GreatScythe_Fire (edict_t *ent)
-{
-	int damage;
-	if (deathmatch->value)
-		damage = 25;
-	else
-		damage = 20;
-	GreatScythe_Fire (ent, vec3_origin, damage);
 	ent->client->ps.gunframe++;
 }
+
 void Weapon_GreatScythe (edict_t *ent)
 {
 	static int      pause_frames[]  = {19, 32, 0};
-	static int      fire_frames[]   = {12, 0};
+	static int      fire_frames[]   = {14, 0};
 
-	Weapon_Generic (ent, 11, 15, 48, 49, pause_frames, fire_frames, Weapon_GreatScythe_Fire, 20);
+	Weapon_Generic (ent, 11, 15, 48, 49, pause_frames, fire_frames, GreatScythe_Fire, 35);
 }
 /*
 ======================================================================
@@ -1085,17 +1089,26 @@ PARRY
 
 ======================================================================
 */
-void Parry_Fire (edict_t *ent, vec3_t g_offset, int damage)
+void Parry_Fire (edict_t *ent)
 {
 	vec3_t  forward, right;
 	vec3_t  start;
 	vec3_t  offset;
+	int		damage;
+
+	ent->client->pers.spear = false;
+
+	if (deathmatch->value)
+		damage = 10;
+	else
+		damage = 5;
 
 	if (is_quad)
 		damage *= 4;
+
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 24, 8, ent->viewheight-8);
-	VectorAdd (offset, g_offset, offset);
+
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 	VectorScale (forward, -3, ent->client->kick_origin);
@@ -1104,24 +1117,16 @@ void Parry_Fire (edict_t *ent, vec3_t g_offset, int damage)
 
 	fire_parry(ent, start, forward, damage, 100 );
 	gi.sound(ent, CHAN_AUTO, gi.soundindex("berserk/swordswing.wav"), 1, ATTN_NORM, 0);
-}
 
-void Weapon_Parry_Fire (edict_t *ent)
-{
-	int damage;
-	if (deathmatch->value)
-		damage = 10;
-	else
-		damage = 5;
-	Parry_Fire (ent, vec3_origin, damage);
 	ent->client->ps.gunframe++;
 }
+
 void Weapon_Parry (edict_t *ent)
 {
 	static int      pause_frames[]  = {19, 32, 0};
-	static int      fire_frames[]   = {12, 0};
+	static int      fire_frames[]   = {10, 0};
 
-	Weapon_Generic (ent, 11, 15, 48, 49, pause_frames, fire_frames, Weapon_Parry_Fire, 20);
+	Weapon_Generic (ent, 9, 14, 25, 26, pause_frames, fire_frames, Parry_Fire, 20);
 }
 
 /*

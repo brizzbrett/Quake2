@@ -656,6 +656,7 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.stamina = client->pers.max_stamina;
 	client->pers.notAttacking = true;
 	client->pers.swing = true;
+	client->pers.spear = false;
 }
 
 
