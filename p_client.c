@@ -305,6 +305,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				break;
 			case MOD_SUNLIGHTSWORD:
 				message = "couldn't praise the sun hard enough like";
+				message2 = " does";
 				break;
 			case MOD_BSGREATHAMMER:
 				message = "died to the might of the Giant Blacksmith, ";
@@ -313,10 +314,10 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				message = "was poked to death by";
 				break;
 			case MOD_SPEAR:
-				message = "was poked by";
+				message = "was speared by";
 				break;
 			case MOD_UCHIGATANA:
-				message = "died to a filthy casul by";
+				message = "died to the filthy casul, ";
 				break;
 			case MOD_GREATSCYTHE:
 				message = "is a filthy casul who died to";
@@ -620,18 +621,6 @@ void InitClientPersistant (gclient_t *client)
 	item = FindItem("Hammer");
 	client->pers.inventory[ITEM_INDEX(item)] = 1;
 
-	item = FindItem("Estoc");
-	client->pers.inventory[ITEM_INDEX(item)] = 2;
-
-	item = FindItem("Spear");
-	client->pers.inventory[ITEM_INDEX(item)] = 3;
-
-	item = FindItem("Uchigatana");
-	client->pers.inventory[ITEM_INDEX(item)] = 4;
-
-	item = FindItem("Scythe");
-	client->pers.inventory[ITEM_INDEX(item)] = 5;
-
 	item = FindItem("Blaster");
 	client->pers.selected_item = ITEM_INDEX(item);
 	client->pers.inventory[client->pers.selected_item] = 1;
@@ -654,9 +643,10 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.stamina_regen = stamina_regen;
 
 	client->pers.stamina = client->pers.max_stamina;
-	client->pers.notAttacking = true;
-	client->pers.swing = true;
-	client->pers.spear = false;
+
+	client->pers.notAttacking = true; //for parrying
+	client->pers.swing = true; //for different swings same weapon
+	client->pers.spear = false; //for spears
 }
 
 
@@ -1837,16 +1827,14 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	{
 		if(ent->client->pers.stamina > 0)
 		{
-			ent->client->pers.stamina -= 0.5;
-			ent->client->pers.stamina_regen = 0;
+			ent->client->pers.stamina -= 1.1;
 		}
 		if(ent->client->pers.stamina <= 0)
 		{
 			ent->client->pers.stamina = -20;
 		}
 	}
-	else
-		ent->client->pers.stamina_regen = 3;
+
 
 	/*BLOCKING
 	 *Checks for flag FL_BLOCKING, if it's set do the following:

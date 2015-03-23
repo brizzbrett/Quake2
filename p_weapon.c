@@ -492,7 +492,7 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 		}
 	}
 
-	if (ent->client->weaponstate == WEAPON_FIRING)
+	if (ent->client->weaponstate == WEAPON_FIRING && ent->client->pers.stamina > 0)
 	{
 		ent->client->pers.notAttacking = false;
 		for (n = 0; fire_frames[n]; n++)
@@ -531,8 +531,12 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 			ent->client->ps.gunframe++;
 		if (ent->client->ps.gunframe == FRAME_IDLE_FIRST+1)
 			ent->client->weaponstate = WEAPON_READY;
-
-
+	}
+	else
+	{
+		ent->client->pers.stamina_regen = 1;
+		ent->client->ps.gunframe== FRAME_IDLE_FIRST+1;
+		ent->client->weaponstate = WEAPON_READY;
 	}
 }
 
@@ -1078,9 +1082,9 @@ void GreatScythe_Fire (edict_t *ent)
 void Weapon_GreatScythe (edict_t *ent)
 {
 	static int      pause_frames[]  = {19, 32, 0};
-	static int      fire_frames[]   = {14, 0};
+	static int      fire_frames[]   = {13, 0};
 
-	Weapon_Generic (ent, 11, 15, 48, 49, pause_frames, fire_frames, GreatScythe_Fire, 35);
+	Weapon_Generic (ent, 9, 15, 48, 49, pause_frames, fire_frames, GreatScythe_Fire, 35);
 }
 /*
 ======================================================================
@@ -1223,7 +1227,6 @@ void Weapon_Generic_Bow (edict_t *ent, int fire_frame, qboolean longbow)
 			{
 				ent->client->ps.gunframe = 3;
 				ent->client->weaponstate = WEAPON_FIRING;
-				ent->client->grenade_time = 0;
 			}
 			else
 			{
@@ -1248,7 +1251,7 @@ void Weapon_Generic_Bow (edict_t *ent, int fire_frame, qboolean longbow)
 		return;
 	}
 
-	if (ent->client->weaponstate == WEAPON_FIRING)
+	if (ent->client->weaponstate == WEAPON_FIRING && ent->client->pers.stamina > 0)
 	{
 		if (ent->client->ps.gunframe == fire_frame-1)
 		{
@@ -1257,19 +1260,19 @@ void Weapon_Generic_Bow (edict_t *ent, int fire_frame, qboolean longbow)
 				return;
 			}
 		}
-		
-		if (ent->client->ps.gunframe == fire_frame && !IS_SET(ent->flags, FL_BLOCKING))
+		if(ent->client->pers.stamina > 0)
 		{
-			if(longbow)
+			if (ent->client->ps.gunframe == fire_frame && !IS_SET(ent->flags, FL_BLOCKING))
 			{
-				Weapon_Longbow_Fire(ent);
+				if(longbow)
+					Weapon_Longbow_Fire(ent);
+				else
+					Weapon_Crossbow_Fire(ent);
+
+				ent->client->pers.stamina -= ent->client->pers.bowfire_frame*3;
+
+				ent->client->pers.dontStopFire = false;
 			}
-			else
-				Weapon_Crossbow_Fire(ent);
-
-			ent->client->pers.stamina -= ent->client->pers.bowfire_frame*4;
-
-			ent->client->pers.dontStopFire = false;
 		}
 		if(ent->client->pers.stamina <= 0)
 		{
@@ -1281,11 +1284,15 @@ void Weapon_Generic_Bow (edict_t *ent, int fire_frame, qboolean longbow)
 		ent->client->ps.gunframe++;
 
 		if (ent->client->ps.gunframe == fire_frame+2)
-		{
-			ent->client->grenade_time = 0;
 			ent->client->weaponstate = WEAPON_READY;
-		}
 	}
+	else
+	{
+		ent->client->pers.stamina_regen = 3;
+		ent->client->ps.gunframe = fire_frame+2;
+		ent->client->weaponstate = WEAPON_READY;
+	}
+
 }
 
 void Weapon_Longbow(edict_t *ent)
