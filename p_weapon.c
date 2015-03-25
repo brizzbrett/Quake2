@@ -854,7 +854,7 @@ void Weapon_Sunsword (edict_t *ent)
 	static int      pause_frames[]  = {19, 32, 0};
 	static int      fire_frames[]   = {4, 0};
 
-	Weapon_Generic (ent, 3, 7, 48, 49, pause_frames, fire_frames, Sunsword_Fire, 20);
+	Weapon_Generic (ent, 3, 7, 25, 26, pause_frames, fire_frames, Sunsword_Fire, 20);
 }
 
 /*
@@ -900,7 +900,7 @@ void Weapon_BSGreatHammer (edict_t *ent)
 	static int      pause_frames[]  = {19, 32, 0};
 	static int      fire_frames[]   = {13, 0};
 
-	Weapon_Generic (ent, 5, 14, 48, 49, pause_frames, fire_frames, BSGreatHammer_Fire, 45);
+	Weapon_Generic (ent, 5, 14, 40, 41, pause_frames, fire_frames, BSGreatHammer_Fire, 45);
 }
 
 /*
@@ -1038,7 +1038,7 @@ void Weapon_Uchi (edict_t *ent)
 	static int      pause_frames[]  = {19, 32, 0};
 	static int      fire_frames[]   = {12, 0};
 
-	Weapon_Generic (ent, 11, 15, 48, 49, pause_frames, fire_frames, Uchi_Fire, 20);
+	Weapon_Generic (ent, 11, 15, 40, 41, pause_frames, fire_frames, Uchi_Fire, 20);
 }
 
 /*
@@ -1084,7 +1084,7 @@ void Weapon_GreatScythe (edict_t *ent)
 	static int      pause_frames[]  = {19, 32, 0};
 	static int      fire_frames[]   = {13, 0};
 
-	Weapon_Generic (ent, 9, 15, 48, 49, pause_frames, fire_frames, GreatScythe_Fire, 35);
+	Weapon_Generic (ent, 9, 15, 40, 41, pause_frames, fire_frames, GreatScythe_Fire, 35);
 }
 /*
 ======================================================================
