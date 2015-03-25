@@ -912,7 +912,7 @@ void Cmd_DodgeRight_f(edict_t *ent)
 	if(ent->client->pers.stamina > 0)
 	{
 		AngleVectors(ent->client->v_angle, NULL, right, NULL);
-		VectorScale(right, 500, right);
+		VectorScale(right, 700, right);
 		VectorAdd(right, ent->velocity, ent->velocity);
 		ent->client->pers.stamina -= 35;
 	}
@@ -923,7 +923,7 @@ void Cmd_DodgeLeft_f(edict_t *ent)
 	if(ent->client->pers.stamina > 0)
 	{
 		AngleVectors(ent->client->v_angle, NULL, right, NULL);
-		VectorScale(right, -500, right);
+		VectorScale(right, -700, right);
 		VectorAdd(right, ent->velocity, ent->velocity);
 		ent->client->pers.stamina -= 35;
 	}
@@ -934,8 +934,9 @@ void Cmd_DodgeForward_f(edict_t *ent)
 	if(ent->client->pers.stamina > 0)
 	{
 		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
-		VectorScale(forward, 500, forward);
+		VectorScale(forward, 700, forward);
 		VectorAdd(forward, ent->velocity, ent->velocity);
+		ent->velocity[2] = 0;
 		ent->client->pers.stamina -= 35;
 	}
 }
@@ -946,8 +947,9 @@ void Cmd_DodgeBack_f(edict_t *ent)
 	if(ent->client->pers.stamina > 0)
 	{
 		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
-		VectorScale(forward, -500, forward);
+		VectorScale(forward, -700, forward);
 		VectorAdd(forward, ent->velocity, ent->velocity);
+		ent->velocity[2] = 0;
 		ent->client->pers.stamina -= 35;
 	}
 }

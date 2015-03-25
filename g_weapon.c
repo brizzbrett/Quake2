@@ -788,7 +788,7 @@ void fire_parry(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 			{
 				if(tr.ent->client->pers.notAttacking == false)
 				{
-					tr.ent->client->pers.stamina = -100;
+					tr.ent->client->pers.stamina = -120;
 					TO_SET(tr.ent->flags, FL_STUNNED);
 					gi.centerprintf(self, "You have parried!");
 				}
