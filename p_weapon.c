@@ -1128,7 +1128,7 @@ void Parry_Fire (edict_t *ent)
 void Weapon_Parry (edict_t *ent)
 {
 	static int      pause_frames[]  = {19, 32, 0};
-	static int      fire_frames[]   = {10, 0};
+	static int      fire_frames[]   = {11, 0};
 
 	Weapon_Generic (ent, 9, 14, 25, 26, pause_frames, fire_frames, Parry_Fire, 20);
 }
