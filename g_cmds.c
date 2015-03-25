@@ -893,6 +893,7 @@ void Cmd_PlayerList_f(edict_t *ent)
  *makes sure player is no longer invincible,
  *and center prints to let you know blocking is inactive.
  */
+/** thanks for you're input, I chose to do it this way because I wanted to try two different commands for 1 stricmp ("block") using my flag FL_BLOCKING*/
 void Cmd_Block_f(edict_t *ent) /** you might have been able to combine these blocking cmds to do both the activating and deactivating instead of two different cmds ERIC*/
 {
 	TO_SET(ent->flags, FL_BLOCKING);
