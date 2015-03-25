@@ -792,7 +792,7 @@ void fire_parry(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 					TO_SET(tr.ent->flags, FL_STUNNED);
 					gi.centerprintf(self, "You have parried!");
 				}
-				else
+				else /**you might want to put brackets around this and other if/else statements just in case ERIC*/
 					T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, 0);
 			}
 			gi.sound (self, CHAN_AUTO, gi.soundindex("berserk/sword.wav") , 1, ATTN_NORM, 0);
@@ -821,7 +821,7 @@ Fires a single arrow.
 */
 void bow_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-	if (other == self->owner)
+	if (other == self->owner) /**and this ERIC*/
 		return;
 
 	if (surf && (surf->flags & SURF_SKY))
@@ -830,10 +830,10 @@ void bow_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 		return;
 	}
 
-	if (self->owner->client)
+	if (self->owner->client)/**and this ERIC*/
 		PlayerNoise(self->owner, self->s.origin, PNOISE_IMPACT);
 
-	if (other->takedamage)
+	if (other->takedamage) /** perfect ERIC*/
 	{
 		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, self->dmg, 1, DAMAGE_ENERGY, MOD_BOW);
 	}

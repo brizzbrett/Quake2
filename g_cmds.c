@@ -893,7 +893,7 @@ void Cmd_PlayerList_f(edict_t *ent)
  *makes sure player is no longer invincible,
  *and center prints to let you know blocking is inactive.
  */
-void Cmd_Block_f(edict_t *ent)
+void Cmd_Block_f(edict_t *ent) /** you might have been able to combine these blocking cmds to do both the activating and deactivating instead of two different cmds ERIC*/
 {
 	TO_SET(ent->flags, FL_BLOCKING);
 	gi.centerprintf(ent, "Blocking is active.");

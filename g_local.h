@@ -880,7 +880,7 @@ typedef struct
 
 	int			bowfire_frame;		// used to calculate gunframe at point mouse is unclicked.
 	qboolean	dontStopFire;	// used to stop bow from continually shooting arrows
-	qboolean	crossbow;
+	qboolean	crossbow; /**what is this used for? ERIC*/
 	qboolean	notAttacking;
 	qboolean	swing;
 	qboolean	spear;
